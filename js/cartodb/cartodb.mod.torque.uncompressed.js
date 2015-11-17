@@ -4801,6 +4801,7 @@ var Filters = require('./torque_filters');
              var y = tileMax - tile.y[posIdx] + anchor; // flip mercator
              this.mx = x;
              this.my = y - 3;
+             this.theTile = tile;
              ctx.drawImage(sp, x, y - (sp.height >> 1));
            }
           }

@@ -12,7 +12,6 @@ var basemap = this.basemap = L.tileLayer(baseurl, {
 var placeToggle = true;
 setInterval(function() {
   return;
-  console.log(placeToggle);
   if (placeToggle = !placeToggle) {
     map.flyTo(brooklyn, 10, {duration: 5});
   } else {
@@ -68,9 +67,24 @@ CustomTorqueLayer = L.TorqueLayer.extend({
       this.adamSetup = true;
     }
 
+    var preX;
+    var preY;
     b = ( a = ctx.createImageData( w, h ) ).data;
     for ( i = 0; i < NUM_PARTICLES; i++ ) {
       p = this.list[i];
+
+      if (this.renderer.theTile) {
+        pos = this.getTilePos(this.renderer.theTile.coord);
+        if (this.renderer.mx !== preX) {
+          this.renderer.mx += pos.x;
+          preX = this.renderer.mx;
+        }
+
+        if (this.renderer.my !== preY) {
+          this.renderer.my += pos.y;
+          preY = this.renderer.my;
+        }
+      }
 
       d = ( dx = this.renderer.mx - p.x ) * dx + ( dy = this.renderer.my - p.y ) * dy;
       f = -THICKNESS / (d*10);
@@ -88,27 +102,34 @@ CustomTorqueLayer = L.TorqueLayer.extend({
     }
 
     ctx.putImageData( a, 0, 0 );
-    for(t in this._tiles) {
-      tile = this._tiles[t];
-      if (tile) {
-        // clear cache
-        if (this.animator.isRunning()) {
-          tile._tileCache = null;
-        }
 
-        pos = this.getTilePos(tile.coord);
-        //ctx.setTransform(1, 0, 0, 1, pos.x, pos.y);
+    if (randomRender !== false) {
 
-        if (tile._tileCache) {
-          // when the tile has a cached image just render it and avoid to render
-          // all the points
-          this.renderer._ctx.drawImage(tile._tileCache, 0, 0);
-        } else {
-          this.renderer.renderTile(tile, this.key);
+      for(t in this._tiles) {
+        tile = this._tiles[t];
+        if (tile) {
+          // clear cache
+          if (this.animator.isRunning()) {
+            tile._tileCache = null;
+          }
+
+          pos = this.getTilePos(tile.coord);
+          ctx.setTransform(1, 0, 0, 1, pos.x, pos.y);
+
+          if (tile._tileCache) {
+            // when the tile has a cached image just render it and avoid to render
+            // all the points
+            this.renderer._ctx.drawImage(tile._tileCache, 0, 0);
+          } else {
+            this.renderer.renderTile(tile, this.key);
+          }
         }
       }
-    }
 
+    } else {
+      this.renderer.mx = undefined;
+      this.renderer.my = undefined;
+    }
   }
   //render: function() {
     //var canvas = this.getCanvas();
