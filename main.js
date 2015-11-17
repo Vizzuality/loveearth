@@ -7,7 +7,6 @@ var NUM_PARTICLES = ( ( ROWS = 100 ) * ( COLS = 175 ) ),
     EASE = 0.25,
     list,
     ctx,
-    tog,
     dx, dy,
     mx, my,
     d, t, f,
@@ -18,31 +17,26 @@ var NUM_PARTICLES = ( ( ROWS = 100 ) * ( COLS = 175 ) ),
     r, c;
 
 function render() {
-  if ( tog = !tog ) {
-    for ( i = 0; i < NUM_PARTICLES; i++ ) {
-      p = list[i];
+  b = ( a = ctx.createImageData( w, h ) ).data;
+  for ( i = 0; i < NUM_PARTICLES; i++ ) {
+    p = list[i];
 
-      d = ( dx = mx - p.x ) * dx + ( dy = my - p.y ) * dy;
-      f = -THICKNESS / (d*10);
+    d = ( dx = mx - p.x ) * dx + ( dy = my - p.y ) * dy;
+    f = -THICKNESS / (d*50);
 
-      if ( d < THICKNESS ) {
-        t = Math.atan2( dy, dx );
-        p.vx += f * Math.cos(t);
-        p.vy += f * Math.sin(t);
-      }
-
-      p.x += ( p.vx *= DRAG ) + (p.ox - p.x) * EASE;
-      p.y += ( p.vy *= DRAG ) + (p.oy - p.y) * EASE;
-    }
-  } else {
-    b = ( a = ctx.createImageData( w, h ) ).data;
-    for ( i = 0; i < NUM_PARTICLES; i++ ) {
-      p = list[i];
-      b[n = ( ~~p.x + ( ~~p.y * w ) ) * 4] = b[n+1] = b[n+2] = COLOR, b[n+3] = 255;
+    if ( d < THICKNESS ) {
+      t = Math.atan2( dy, dx );
+      p.vx += f * Math.cos(t);
+      p.vy += f * Math.sin(t);
     }
 
-    ctx.putImageData( a, 0, 0 );
+    p.x += ( p.vx *= DRAG ) + (p.ox - p.x) * EASE;
+    p.y += ( p.vy *= DRAG ) + (p.oy - p.y) * EASE;
+
+    b[n = ( ~~p.x + ( ~~p.y * w ) ) * 4] = b[n+1] = b[n+2] = COLOR, b[n+3] = 255;
   }
+
+  ctx.putImageData( a, 0, 0 );
 
   requestAnimationFrame(render);
 }
@@ -51,7 +45,6 @@ var container = document.getElementById( 'container' );
 var canvas = document.createElement( 'canvas' );
 
 ctx = canvas.getContext( '2d' );
-tog = true;
 
 list = [];
 

@@ -2120,6 +2120,10 @@ L.CanvasLayer = L.Class.extend({
     this._reset();
   },
 
+  _layerAdd: function(event) {
+    this.onAdd(event.target);
+  },
+
   _animateZoom: function (e) {
     if (!this._animating) {
         this._animating = true;
@@ -2377,7 +2381,8 @@ L.Mixin.TileLoader = {
 
   getTilePos: function (tilePoint) {
     tilePoint = new L.Point(tilePoint.x, tilePoint.y);
-    var origin = this._map._getNewTopLeftPoint(this._map.getCenter()),
+    var viewHalf = this._map.getSize()._divideBy(2);
+    var origin = this._map.project(this._map.getCenter())._subtract(viewHalf)._round(),
         tileSize = this.options.tileSize;
 
     return tilePoint.multiplyBy(tileSize).subtract(origin);
@@ -2554,6 +2559,10 @@ L.TorqueLayer = L.CanvasLayer.extend({
     L.CanvasLayer.prototype.onAdd.call(this, map);
   },
 
+  _layerAdd: function(event) {
+    this.onAdd(event.target);
+  },
+
   onRemove: function(map) {
     this.fire('remove');
     this._removeTileLoader();
@@ -2638,124 +2647,58 @@ L.TorqueLayer = L.CanvasLayer.extend({
    * requestAnimationFrame. Use redraw to refresh it
    */
   render: function() {
-    if(this.hidden) return;
-
-    //var t, tile, pos;
-
+		if(this.hidden) return;
+    var t, tile, pos;
     var canvas = this.getCanvas();
-    //this.renderer.clearCanvas();
+    this.renderer.clearCanvas();
     var ctx = canvas.getContext('2d');
 
-    var THICKNESS = Math.pow( 80, 2 ),
-        SPACING = 5,
-        MARGIN = 100,
-        COLOR = 255,
-        DRAG = 0.95,
-        EASE = 0.25,
-        dx, dy,
-        mx, my,
-        d, t, f,
-        a, b,
-        i, n,
-        w, h,
-        p, s,
-        r, c;
+    for(t in this._tiles) {
+      tile = this._tiles[t];
+      if (tile) {
+        // clear cache
+        if (this.animator.isRunning()) {
+          tile._tileCache = null;
+        }
 
-    w = canvas.width;
-    h = canvas.height;
+        pos = this.getTilePos(tile.coord);
+        ctx.setTransform(1, 0, 0, 1, pos.x, pos.y);
 
-    var COLS = w / SPACING;
-    var ROWS = h / SPACING;
-    var NUM_PARTICLES = COLS * ROWS;
-
-    if (!this.adamSetup) {
-      this.list = [];
-
-      var particle = { vx: 0, vy: 0, x: 0, y: 0 };
-
-      for ( i = 0; i < NUM_PARTICLES; i++ ) {
-
-        p = Object.create(particle);
-        p.x = p.ox = MARGIN + SPACING * ( i % COLS );
-        p.y = p.oy = MARGIN + SPACING * Math.floor( i / COLS );
-
-        this.list[i] = p;
+        if (tile._tileCache) {
+          // when the tile has a cached image just render it and avoid to render
+          // all the points
+          this.renderer._ctx.drawImage(tile._tileCache, 0, 0);
+        } else {
+          this.renderer.renderTile(tile, this.key);
+        }
       }
-
-      this.adamSetup = true;
     }
-
-    mx = Math.floor(Math.random() * (w + 1));
-    my = Math.floor(Math.random() * (h + 1));
-
-    b = ( a = ctx.createImageData( w, h ) ).data;
-    for ( i = 0; i < NUM_PARTICLES; i++ ) {
-      p = this.list[i];
-
-      d = ( dx = mx - p.x ) * dx + ( dy = my - p.y ) * dy;
-      f = -THICKNESS / (d*10);
-
-      if ( d < THICKNESS ) {
-        t = Math.atan2( dy, dx );
-        p.vx += f * Math.cos(t);
-        p.vy += f * Math.sin(t);
-      }
-
-      p.x += ( p.vx *= DRAG ) + (p.ox - p.x) * EASE;
-      p.y += ( p.vy *= DRAG ) + (p.oy - p.y) * EASE;
-
-      b[n = ( ~~p.x + ( ~~p.y * w ) ) * 4] = b[n+1] = b[n+2] = COLOR, b[n+3] = 255;
-    }
-
-    ctx.putImageData( a, 0, 0 );
-
-    //for(t in this._tiles) {
-      //tile = this._tiles[t];
-      //if (tile) {
-        //// clear cache
-        //if (this.animator.isRunning()) {
-          //tile._tileCache = null;
-        //}
-
-        //pos = this.getTilePos(tile.coord);
-        //ctx.setTransform(1, 0, 0, 1, pos.x, pos.y);
-
-        //if (tile._tileCache) {
-          //// when the tile has a cached image just render it and avoid to render
-          //// all the points
-          //this.renderer._ctx.drawImage(tile._tileCache, 0, 0);
-        //} else {
-          //this.renderer.renderTile(tile, this.key);
-        //}
-      //}
-    //}
-    //this.renderer.applyFilters();
+    this.renderer.applyFilters();
 
     // prepare caches if the animation is not running
     // don't cache if the key has just changed, this avoids to cache
     // when the user is dragging, it only cache when the map is still
-    //if (!this.animator.isRunning() && this.key === this.prevRenderedKey) {
-      //var tile_size = this.renderer.TILE_SIZE;
-      //for(t in this._tiles) {
-        //tile = this._tiles[t];
-        //if (tile && !tile._tileCache) {
-          //var c = tile._tileCache = document.createElement('canvas');
-          //c.width = c.height = tile_size;
-          //pos = this.getTilePos(tile.coord);
-          //// clip bounds, firefox raise an exception when try to get data from outside canvas
-          //var x = Math.max(0, pos.x)
-          //var y = Math.max(0, pos.y)
-          //var w = Math.min(tile_size, this.getCanvas().width - x);
-          //var h = Math.min(tile_size, this.getCanvas().height - y);
-          //if (w > 0 && h > 0) {
-            //c.getContext('2d').drawImage(this.getCanvas(), x, y, w, h, x - pos.x, y - pos.y, w, h);
-          //}
-        //}
-      //}
-    //}
+    if (!this.animator.isRunning() && this.key === this.prevRenderedKey) {
+      var tile_size = this.renderer.TILE_SIZE;
+      for(t in this._tiles) {
+        tile = this._tiles[t];
+        if (tile && !tile._tileCache) {
+          var c = tile._tileCache = document.createElement('canvas');
+          c.width = c.height = tile_size;
+          pos = this.getTilePos(tile.coord);
+          // clip bounds, firefox raise an exception when try to get data from outside canvas
+          var x = Math.max(0, pos.x)
+          var y = Math.max(0, pos.y)
+          var w = Math.min(tile_size, this.getCanvas().width - x);
+          var h = Math.min(tile_size, this.getCanvas().height - y);
+          if (w > 0 && h > 0) {
+            c.getContext('2d').drawImage(this.getCanvas(), x, y, w, h, x - pos.x, y - pos.y, w, h);
+          }
+        }
+      }
+    }
 
     this.prevRenderedKey = this.key;
-
   },
 
   /**
@@ -4775,9 +4718,6 @@ var Filters = require('./torque_filters');
           for(var fr = 0; fr < layer.frames().length; ++fr) {
             var frame = layer.frames()[fr];
             var fr_sprites = sprites[frame] || (sprites[frame] = []);
-            if (fr_sprites.length > 0) {
-              debugger
-            }
 
             this._renderTile(tile, key - frame, frame, fr_sprites, layer);
           }
@@ -4854,12 +4794,13 @@ var Filters = require('./torque_filters');
           if (c) {
            var sp = sprites[c];
            if (sp === undefined) {
-						 debugger
              sp = sprites[c] = this.generateSprite(shader, c, torque.extend({ zoom: tile.z, 'frame-offset': frame_offset }, shaderVars));
            }
            if (sp) {
-             var x = tile.x[posIdx]- (sp.width >> 1) + anchor;
+             var x = tile.x[posIdx]- 3 + anchor;
              var y = tileMax - tile.y[posIdx] + anchor; // flip mercator
+             this.mx = x;
+             this.my = y - 3;
              ctx.drawImage(sp, x, y - (sp.height >> 1));
            }
           }

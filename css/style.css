@@ -9,5 +9,6 @@ body{height:100%; width:100%; font-family: 'proxima_novasemibold', Helvetica, Ar
 div.cartodb-timeslider{display: none}
 
 #map {
-    bottom: 176px !important;
+  width: 600px;
+  height: 600px;
 }
