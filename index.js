@@ -11,13 +11,12 @@ var basemap = this.basemap = L.tileLayer(baseurl, {
 
 var placeToggle = true;
 setInterval(function() {
-  return;
   if (placeToggle = !placeToggle) {
     map.flyTo(brooklyn, 10, {duration: 5});
   } else {
     map.flyTo(sf, 10, {duration: 5});
   }
-}, 10000);
+}, 15000);
 
 var randomRender = true;
 
