@@ -25,9 +25,12 @@ setInterval(function() {
 
 var randomRender = true;
 
+var renderIndex = 0;
+
+var availableImages = [{path: '/image.jpg', x: 25, y: 25}];
 CustomTorqueLayer = L.TorqueLayer.extend({
   render: function() {
-		if(this.hidden) return;
+    if(this.hidden) return;
     var t, tile, pos;
     var canvas = this.getCanvas();
     var ctx = canvas.getContext('2d');
@@ -95,6 +98,15 @@ CustomTorqueLayer = L.TorqueLayer.extend({
     ctx.putImageData( a, 0, 0 );
 
     if (randomRender !== false) {
+      if (renderIndex % 10 === 0) {
+        availableImages.push({
+          path: '/image.jpg',
+          x: this.renderer.mx,
+          y: this.renderer.my
+        });
+      }
+      renderIndex++;
+
       for(t in this._tiles) {
         tile = this._tiles[t];
         if (tile) {
@@ -119,20 +131,21 @@ CustomTorqueLayer = L.TorqueLayer.extend({
     } else {
       this.renderer.mx = undefined;
       this.renderer.my = undefined;
+      availableImages = [];
     }
   }
 });
 
 var CARTOCSS = [
-	'Map {',
-	'-torque-time-attribute: "created_time";',
-	'-torque-aggregation-function: "count(cartodb_id)";',
+  'Map {',
+  '-torque-time-attribute: "created_time";',
+  '-torque-aggregation-function: "count(cartodb_id)";',
         '-torque-frame-count: 4096;',
         '-torque-animation-duration: 300;',
         '-torque-resolution: 1',
-	'}',
-	'#layer {',
-	'  marker-width: 3;',
+  '}',
+  '#layer {',
+  '  marker-width: 3;',
         '  marker-fill: #7887AB;',
         '}',
   '#layer[frame-offset=2] {',
@@ -168,3 +181,83 @@ map.on('movestart', function() {
 map.on('moveend', function() {
   randomRender = true;
 });
+
+var easeInOutCirc = function(currentIteration, startValue, changeInValue, totalIterations) {
+	if ((currentIteration /= totalIterations / 2) < 1) {
+		return changeInValue / 2 * (1 - Math.sqrt(1 - currentIteration * currentIteration)) + startValue;
+	}
+	return changeInValue / 2 * (Math.sqrt(1 - (currentIteration -= 2) * currentIteration) + 1) + startValue;
+}
+
+var bounceDuration = 0.5, fps = 60;
+var iterations = bounceDuration * fps;
+var startSize = 0, endSize = 50;
+var changePerItration = (endSize - startSize) / iterations;
+var changeInValue = (endSize - startSize);
+var currentIteration = 0;
+var imageRendered = false;
+var fadePercentage = 0;
+var value;
+var img, imgSrc;
+
+var ImageLayer = L.CanvasLayer.extend({
+  render: function() {
+    var canvas = this.getCanvas();
+    var ctx = canvas.getContext('2d');
+
+    if (randomRender === false) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      imageRendered = false;
+      fadePercentage = 0;
+      img = undefined;
+      imgSrc = undefined;
+      return this.redraw();
+    }
+
+    if (!imageRendered) {
+      ctx.globalAlpha = 1;
+      value = easeInOutCirc(currentIteration, startSize, changeInValue, iterations);
+
+      if (currentIteration < iterations) {
+        currentIteration++;
+      } else {
+        currentIteration = 0;
+        imageRendered = true;
+      }
+    } else {
+      if (fadePercentage > 100) {
+        imageRendered = false;
+        fadePercentage = 0;
+        img = undefined;
+        imgSrc = undefined;
+      } else {
+        fadePercentage += 1;
+        ctx.globalAlpha = (1 - fadePercentage / 100);
+      }
+    }
+
+    if (!img) {
+      imgSrc = availableImages.pop();
+      if (imgSrc === undefined) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return this.redraw();
+      }
+
+      img = new Image;
+      img.onload = function(){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img,imgSrc.x-(value/2),imgSrc.y-(value/2),value,value);
+        this.redraw();
+      }.bind(this);
+      img.src = imgSrc.path;
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img,imgSrc.x-(value/2),imgSrc.y-(value/2),value,value);
+      this.redraw();
+    }
+  }
+});
+
+var imageLayer = new ImageLayer();
+imageLayer.addTo(map);
+imageLayer.setZIndex(1000);
