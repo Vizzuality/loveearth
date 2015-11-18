@@ -27,7 +27,7 @@ var randomRender = true;
 
 var renderIndex = 0;
 
-var availableImages = [{path: '/image.jpg', x: 25, y: 25}];
+var availableImages = [{path: './image.jpg', x: 25, y: 25}];
 CustomTorqueLayer = L.TorqueLayer.extend({
   render: function() {
     if(this.hidden) return;
@@ -100,7 +100,7 @@ CustomTorqueLayer = L.TorqueLayer.extend({
     if (randomRender !== false) {
       if (renderIndex % 10 === 0) {
         availableImages.push({
-          path: '/image.jpg',
+          path: './image.jpg',
           x: this.renderer.mx,
           y: this.renderer.my
         });
