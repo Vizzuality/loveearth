@@ -76,6 +76,17 @@ CustomTorqueLayer = L.TorqueLayer.extend({
 
     this.renderer.getTilePos = this.getTilePos.bind(this);
 
+    if (randomRender !== false) {
+      if (renderIndex % 10 === 0) {
+        availableImages.push({
+          path: './image.jpg',
+          x: this.renderer.mx,
+          y: this.renderer.my
+        });
+      }
+      renderIndex++;
+    }
+
     b = ( a = ctx.createImageData( w, h ) ).data;
     for ( i = 0; i < NUM_PARTICLES; i++ ) {
       p = this.list[i];
@@ -98,15 +109,6 @@ CustomTorqueLayer = L.TorqueLayer.extend({
     ctx.putImageData( a, 0, 0 );
 
     if (randomRender !== false) {
-      if (renderIndex % 10 === 0) {
-        availableImages.push({
-          path: './image.jpg',
-          x: this.renderer.mx,
-          y: this.renderer.my
-        });
-      }
-      renderIndex++;
-
       for(t in this._tiles) {
         tile = this._tiles[t];
         if (tile) {
@@ -189,7 +191,7 @@ var easeInOutCirc = function(currentIteration, startValue, changeInValue, totalI
 	return changeInValue / 2 * (Math.sqrt(1 - (currentIteration -= 2) * currentIteration) + 1) + startValue;
 }
 
-var bounceDuration = 0.5, fps = 60;
+var bounceDuration = 0.25, fps = 60;
 var iterations = bounceDuration * fps;
 var startSize = 0, endSize = 50;
 var changePerItration = (endSize - startSize) / iterations;
@@ -230,8 +232,9 @@ var ImageLayer = L.CanvasLayer.extend({
         fadePercentage = 0;
         img = undefined;
         imgSrc = undefined;
+        ctx.restore();
       } else {
-        fadePercentage += 1;
+        fadePercentage += 2;
         ctx.globalAlpha = (1 - fadePercentage / 100);
       }
     }
@@ -245,14 +248,33 @@ var ImageLayer = L.CanvasLayer.extend({
 
       img = new Image;
       img.onload = function(){
+        ctx.save();
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.beginPath();
+        ctx.arc(imgSrc.x, imgSrc.y, value/2, 0, 2 * Math.PI, false);
+        ctx.clip();
+
         ctx.drawImage(img,imgSrc.x-(value/2),imgSrc.y-(value/2),value,value);
+
+        ctx.restore();
+
         this.redraw();
       }.bind(this);
       img.src = imgSrc.path;
     } else {
+      ctx.save();
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.beginPath();
+      ctx.arc(imgSrc.x, imgSrc.y, value/2, 0, 2 * Math.PI, false);
+      ctx.clip();
+
       ctx.drawImage(img,imgSrc.x-(value/2),imgSrc.y-(value/2),value,value);
+
+      ctx.restore();
       this.redraw();
     }
   }
@@ -260,4 +282,4 @@ var ImageLayer = L.CanvasLayer.extend({
 
 var imageLayer = new ImageLayer();
 imageLayer.addTo(map);
-imageLayer.setZIndex(1000);
+imageLayer.setZIndex(998);
