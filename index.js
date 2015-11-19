@@ -14,7 +14,7 @@ var basemap = this.basemap = L.tileLayer(baseurl, {
   attribution: 'data OSM - map CartoDB'
 }).addTo(map);
 
-var satelliteUrl = 'http://localhost:11111/{z}/{x}/{y}.png';
+var satelliteUrl = 'tiles/{z}/{x}/{y}.png';
 var satellite = L.tileLayer(satelliteUrl, {errorTileUrl: 'none.png', tms: true}).addTo(map);
 satellite.setZIndex(997);
 
