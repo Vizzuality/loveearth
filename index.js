@@ -1,33 +1,39 @@
-var dc = [38.91, -77.04],
-  trd = [63.41, 10.41],
-  brooklyn = [40.6928, -73.9903],
-  sf = [37.7833, -122.4167];
+var PLACES = [
+  [37.815208598896255, -122.50511169433595, 11], //SF
+  [40.60966, -77.51666, 12], // Pennsylvania
+  [29.98375, 31.13402, 13], // Giza
+  [22.04241, 114.29559, 12], // Wangijao Bay
+  [-27.3607908948644, 153.41033935546875, 13], // Crab Island
+  [38.90799941685375, -77.0332145690918, 13], // Washington
+  [-20.23182, -43.47112, 10], // Somewhere in Brazil
+];
 
 var baseurl = this.baseurl = 'http://{s}.api.cartocdn.com/base-flatblue/{z}/{x}/{y}.png';
-var map = this.map = L.map('map', {zoomControl: false}).setView(brooklyn, 10);
+var map = this.map = L.map('map', {zoomControl: false}).setView(PLACES[0], PLACES[0][2]);
 var basemap = this.basemap = L.tileLayer(baseurl, {
   attribution: 'data OSM - map CartoDB'
 }).addTo(map);
+
+var satelliteUrl = 'http://localhost:11111/{z}/{x}/{y}.png';
+var satellite = L.tileLayer(satelliteUrl, {errorTileUrl: 'none.png', tms: true}).addTo(map);
+satellite.setZIndex(997);
 
 map.dragging.disable();
 map.touchZoom.disable();
 map.doubleClickZoom.disable();
 map.scrollWheelZoom.disable()
 
-var placeToggle = true;
+var placeToggle = true, placeIndex = 0;
 setInterval(function() {
-  if (placeToggle = !placeToggle) {
-    map.flyTo(brooklyn, 10, {duration: 5});
-  } else {
-    map.flyTo(sf, 10, {duration: 5});
-  }
-}, 15000);
+  var currentIndex = placeIndex % (PLACES.length-1);
+  map.flyTo(PLACES[currentIndex], PLACES[currentIndex][2], {duration: 5});
+  placeIndex += 1;
+}, 10000);
 
-var randomRender = true;
+var randomRender = true,
+    renderIndex = 0;
 
-var renderIndex = 0;
-
-var availableImages = [{path: './image.jpg', x: 25, y: 25}];
+var availableImages = [];
 CustomTorqueLayer = L.TorqueLayer.extend({
   render: function() {
     if(this.hidden) return;
@@ -140,16 +146,16 @@ CustomTorqueLayer = L.TorqueLayer.extend({
 
 var CARTOCSS = [
   'Map {',
-  '-torque-time-attribute: "created_time";',
-  '-torque-aggregation-function: "count(cartodb_id)";',
-        '-torque-frame-count: 4096;',
-        '-torque-animation-duration: 300;',
-        '-torque-resolution: 1',
+  '  -torque-time-attribute: "created_time";',
+  '  -torque-aggregation-function: "count(cartodb_id)";',
+  '  -torque-frame-count: 4096;',
+  '  -torque-animation-duration: 300;',
+  '  -torque-resolution: 1',
   '}',
   '#layer {',
   '  marker-width: 3;',
-        '  marker-fill: #7887AB;',
-        '}',
+  '  marker-fill: #7887AB;',
+  '}',
   '#layer[frame-offset=2] {',
   '  marker-width:4.5;',
   '  marker-fill-opacity:0.75;',
@@ -162,7 +168,7 @@ var CARTOCSS = [
 
 var torqueLayer = new CustomTorqueLayer({
   user       : 'aarondb',
-  table      : 'instadb_brooklyn',
+  table      : 'instadb_loveearth',
   cartocss: CARTOCSS
 });
 
@@ -178,6 +184,11 @@ torqueLayer.play()
 
 map.on('movestart', function() {
   randomRender = false;
+  torqueLayer.pause();
+});
+
+map.on('zoomend', function(event) {
+  torqueLayer.play();
 });
 
 map.on('moveend', function() {
@@ -185,10 +196,10 @@ map.on('moveend', function() {
 });
 
 var easeInOutCirc = function(currentIteration, startValue, changeInValue, totalIterations) {
-	if ((currentIteration /= totalIterations / 2) < 1) {
-		return changeInValue / 2 * (1 - Math.sqrt(1 - currentIteration * currentIteration)) + startValue;
-	}
-	return changeInValue / 2 * (Math.sqrt(1 - (currentIteration -= 2) * currentIteration) + 1) + startValue;
+  if ((currentIteration /= totalIterations / 2) < 1) {
+    return changeInValue / 2 * (1 - Math.sqrt(1 - currentIteration * currentIteration)) + startValue;
+  }
+  return changeInValue / 2 * (Math.sqrt(1 - (currentIteration -= 2) * currentIteration) + 1) + startValue;
 }
 
 var bounceDuration = 0.25, fps = 60;
