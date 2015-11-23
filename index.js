@@ -1,11 +1,12 @@
 var PLACES = [
-  [37.815208598896255, -122.50511169433595, 11], //SF
-  [40.60966, -77.51666, 12], // Pennsylvania
-  [29.98375, 31.13402, 13], // Giza
-  [22.04241, 114.29559, 12], // Wangijao Bay
-  [-27.3607908948644, 153.41033935546875, 13], // Crab Island
-  [38.90799941685375, -77.0332145690918, 13], // Washington
-  [-20.23182, -43.47112, 10], // Somewhere in Brazil
+  [40.6928, -73.9903, 10],
+  [37.815208598896255, -122.50511169433595, 14], //SF
+  [40.60966, -77.51666, 13], // Pennsylvania
+  [29.98375, 31.13402, 15], // Giza
+  [22.04241, 114.29559, 14], // Wangijao Bay
+  [-27.3607908948644, 153.41033935546875, 14], // Crab Island
+  [38.90799941685375, -77.0332145690918, 15], // Washington
+  [-20.23182, -43.47112, 15], // Somewhere in Brazil
 ];
 
 var baseurl = this.baseurl = 'http://{s}.api.cartocdn.com/base-flatblue/{z}/{x}/{y}.png';
@@ -23,12 +24,12 @@ map.touchZoom.disable();
 map.doubleClickZoom.disable();
 map.scrollWheelZoom.disable()
 
-var placeToggle = true, placeIndex = 0;
+var placeToggle = true, placeIndex = 1;
 setInterval(function() {
   var currentIndex = placeIndex % (PLACES.length-1);
   map.flyTo(PLACES[currentIndex], PLACES[currentIndex][2], {duration: 5});
   placeIndex += 1;
-}, 10000);
+}, 7500);
 
 var randomRender = true,
     renderIndex = 0;
@@ -168,7 +169,7 @@ var CARTOCSS = [
 
 var torqueLayer = new CustomTorqueLayer({
   user       : 'aarondb',
-  table      : 'instadb_loveearth',
+  table      : 'instadb_brooklyn',
   cartocss: CARTOCSS
 });
 
