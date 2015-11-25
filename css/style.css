@@ -1,14 +1,117 @@
-body{height:100%; width:100%; font-family: 'proxima_novasemibold', Helvetica, Arial, Sans-serif; margin: 0}
-.left{left: 0; right: 50%;}
-.right{left: 50%; right: 0; text-align: right}
-.right h2{right: 20px;left: auto;}
+body {
+  font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
 
-.mapContainer{position: absolute; bottom: 176px; top: 0;}
-#bottomArea{display: block; width: 100%; height: 176px; position: absolute; bottom: 0;  border-top: 1px solid #111; background: #fff;}
+header {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: #F2F2F2;
+}
 
-div.cartodb-timeslider{display: none}
+header ul,
+header ul li {
+  display: inline-block;
+}
+
+header ul {
+  position: absolute;
+  right: 0;
+  height: 60px;
+}
+
+header ul li {
+  font-weight: bold;
+  font-size: 12px;
+  padding: 22px 20px;
+  height: 60px;
+  box-sizing: border-box;
+  cursor: pointer;
+  text-transform: uppercase;
+  border-right: 1px solid #D7D7D9;
+  margin-left: -4px;
+}
+
+header ul li:last-of-type {
+  border: 0;
+}
+
+header ul li:hover {
+  background-color: #24D3CD;
+  color: white;
+}
+
+header ul li a {
+  text-decoration: none;
+  color: black;
+}
+
+header ul li,
+header ul li a {
+  -webkit-transition: background 0.2s linear;
+  -moz-transition: background 0.2s linear;
+  transition: background 0.2s linear;
+}
+
+header ul li:hover a,
+header ul li a:hover {
+  color: white;
+}
 
 #map {
-  width: 1000px;
-  height: 700px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 60px;
+  bottom: 0;
+}
+
+.map-info {
+  z-index: 1001;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 0 30px 30px 0;
+  text-transform: uppercase;
+  color: white;
+  text-align: right;
+}
+
+.map-info h2 {
+  display: inline-block;
+  font-size: 12px;
+}
+
+.map-info-hashtag {
+  margin-left: 5px;
+  color: #24D3CD;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.map-info h3 {
+  display: inline-block;
+  text-transform: none;
+}
+
+.map-attributions,
+.map-attributions li {
+  display: inline-block;
+}
+
+.map-info-separator {
+  position: relative;
+  height: 40px;
+}
+
+.map-info-separator hr {
+  position: absolute;
+  right: 0;
+  width: 50px;
+  margin: 20px 0;
+  height: 0;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-right: 0;
+  border-left: 0;
 }

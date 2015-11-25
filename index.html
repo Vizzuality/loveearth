@@ -1,20 +1,55 @@
+<!doctype>
 <html>
   <head>
-    <style type="text/css">
-      html, body {
-        background: #000;
-      }
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-      #container {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-      }
-    </style>
+    <title>Climate change - Conversations on Facebook</title>
+
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="http://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/themes/css/cartodb.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <script src="js/leaflet-src.js"></script>
+    <script src="js/cartodb/cartodb_noleaflet.js"></script>
+    <script src="js/cartodb/cartodb.mod.torque.uncompressed.js"></script>
   </head>
 
   <body>
-    <div id="container"></div>
-    <script src="main.js"></script>
+    <header>
+      <ul>
+        <li><a href="#">About the project</a></li>
+        <li><a href="#">F</a></li>
+        <li><a href="#">T</a></li>
+      </ul>
+    </header>
+
+    <div id="map">
+      <div class="map-info">
+        <div>
+          <h2><span id="place-name"></span> Instagrams</h2>
+          <span class="map-info-hashtag">#LoveEarth</span>
+        </div>
+
+        <div class="map-info-separator">
+          <hr>
+        </div>
+
+        <div>
+          <h3>Created by</h3>
+          <ul class="map-attributions">
+            <li>Vizzuality</li>
+            <li>CartoDB</li>
+            <li>Planet Labs</li>
+            <li>Facebook</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script src="index.js"></script>
+
   </body>
 </html>

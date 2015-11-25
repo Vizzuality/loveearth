@@ -1,23 +1,21 @@
 var PLACES = [
-  [40.6928, -73.9903, 10],
-  [37.815208598896255, -122.50511169433595, 14], //SF
-  [40.60966, -77.51666, 13], // Pennsylvania
-  [29.98375, 31.13402, 15], // Giza
-  [22.04241, 114.29559, 14], // Wangijao Bay
-  [-27.3607908948644, 153.41033935546875, 14], // Crab Island
-  [38.90799941685375, -77.0332145690918, 15], // Washington
-  [-20.23182, -43.47112, 15], // Somewhere in Brazil
+  [40.6928, -73.9903, 10, "Brooklyn"],
+  [37.815208598896255, -122.50511169433595, 14, "San Francisco"], //SF
+  [40.60966, -77.51666, 13, "Pennsylvania"], // Pennsylvania
+  [29.98375, 31.13402, 15, "Giza"], // Giza
+  [22.04241, 114.29559, 14, "Wangijao Bay"], // Wangijao Bay
+  [-27.3607908948644, 153.41033935546875, 14, "Crab Island"], // Crab Island
+  [38.90799941685375, -77.0332145690918, 15, "Washington"], // Washington
+  [-20.23182, -43.47112, 15, "Brazil"], // Somewhere in Brazil
 ];
 
 var baseurl = this.baseurl = 'http://{s}.api.cartocdn.com/base-flatblue/{z}/{x}/{y}.png';
-var map = this.map = L.map('map', {zoomControl: false}).setView(PLACES[0], PLACES[0][2]);
-var basemap = this.basemap = L.tileLayer(baseurl, {
-  attribution: 'data OSM - map CartoDB'
-}).addTo(map);
+var map = this.map = L.map('map', {attributionControl: false, zoomControl: false}).setView(PLACES[0].slice(0,2), PLACES[0][2]);
+var basemap = this.basemap = L.tileLayer(baseurl).addTo(map);
 
-var satelliteUrl = 'tiles/{z}/{x}/{y}.png';
-var satellite = L.tileLayer(satelliteUrl, {errorTileUrl: 'none.png', tms: true}).addTo(map);
-satellite.setZIndex(997);
+//var satelliteUrl = 'tiles/{z}/{x}/{y}.png';
+//var satellite = L.tileLayer(satelliteUrl, {errorTileUrl: 'none.png', tms: true}).addTo(map);
+//satellite.setZIndex(997);
 
 map.dragging.disable();
 map.touchZoom.disable();
@@ -25,10 +23,14 @@ map.doubleClickZoom.disable();
 map.scrollWheelZoom.disable()
 
 var placeToggle = true, placeIndex = 1;
+var placeNameEl = document.querySelector('#place-name');
+placeNameEl.innerHTML = PLACES[0][3];
 setInterval(function() {
   var currentIndex = placeIndex % (PLACES.length-1);
-  map.flyTo(PLACES[currentIndex], PLACES[currentIndex][2], {duration: 5});
+  map.flyTo(PLACES[currentIndex].slice(0,2), PLACES[currentIndex][2], {duration: 5});
   placeIndex += 1;
+
+  placeNameEl.innerHTML = PLACES[currentIndex][3];
 }, 7500);
 
 var randomRender = true,
@@ -155,7 +157,7 @@ var CARTOCSS = [
   '}',
   '#layer {',
   '  marker-width: 3;',
-  '  marker-fill: #7887AB;',
+  '  marker-fill: #24D3CD;',
   '}',
   '#layer[frame-offset=2] {',
   '  marker-width:4.5;',
@@ -173,7 +175,7 @@ var torqueLayer = new CustomTorqueLayer({
   cartocss: CARTOCSS
 });
 
-torqueLayer.setZIndex(999);
+torqueLayer.setZIndex(996);
 
 torqueLayer.error(function(err){
   for(error in err){
@@ -182,6 +184,10 @@ torqueLayer.error(function(err){
 });
 torqueLayer.addTo(map);
 torqueLayer.play()
+
+//torqueLayer.on('change:time', function(change) {
+  //debugger
+//});
 
 map.on('movestart', function() {
   randomRender = false;
