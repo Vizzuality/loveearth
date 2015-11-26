@@ -1,8 +1,7 @@
 var PLACES = [
-  [40.6928, -73.9903, 10, "Brooklyn"],
-  [39.436193, -98.833008, 5, "North America"],
-  [48.864715, 10.239258, 5, "Europe"],
   [27.994401, 94.877930, 5, "Asia"],
+  [48.864715, 10.239258, 5, "Europe"],
+  [39.436193, -98.833008, 5, "North America"],
   [-24.846565, 134.868164, 5, "Australia"],
   [5.615986, 21.357422, 4, "Africa"],
   [-10.228437, -57.700195, 5, "South America"]
@@ -150,8 +149,8 @@ var CARTOCSS = [
   'Map {',
   '  -torque-time-attribute: "created_time";',
   '  -torque-aggregation-function: "count(cartodb_id)";',
-  '  -torque-frame-count: 4096;',
-  '  -torque-animation-duration: 300;',
+  '  -torque-frame-count: 512;',
+  '  -torque-animation-duration: 20;',
   '  -torque-resolution: 1',
   '}',
   '#layer {',
@@ -170,7 +169,7 @@ var CARTOCSS = [
 
 var torqueLayer = new CustomTorqueLayer({
   user       : 'aarondb',
-  table      : 'instadb_brooklyn',
+  table      : 'instadb_loveearth',
   cartocss: CARTOCSS
 });
 
