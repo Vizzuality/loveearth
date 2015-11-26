@@ -1,12 +1,11 @@
 var PLACES = [
   [40.6928, -73.9903, 10, "Brooklyn"],
-  [37.815208598896255, -122.50511169433595, 14, "San Francisco"], //SF
-  [40.60966, -77.51666, 13, "Pennsylvania"], // Pennsylvania
-  [29.98375, 31.13402, 15, "Giza"], // Giza
-  [22.04241, 114.29559, 14, "Wangijao Bay"], // Wangijao Bay
-  [-27.3607908948644, 153.41033935546875, 14, "Crab Island"], // Crab Island
-  [38.90799941685375, -77.0332145690918, 15, "Washington"], // Washington
-  [-20.23182, -43.47112, 15, "Brazil"], // Somewhere in Brazil
+  [39.436193, -98.833008, 5, "North America"],
+  [48.864715, 10.239258, 5, "Europe"],
+  [27.994401, 94.877930, 5, "Asia"],
+  [-24.846565, 134.868164, 5, "Australia"],
+  [5.615986, 21.357422, 4, "Africa"],
+  [-10.228437, -57.700195, 5, "South America"]
 ];
 
 var baseurl = this.baseurl = 'http://{s}.api.cartocdn.com/base-flatblue/{z}/{x}/{y}.png';
@@ -31,7 +30,7 @@ setInterval(function() {
   placeIndex += 1;
 
   placeNameEl.innerHTML = PLACES[currentIndex][3];
-}, 7500);
+}, 15000);
 
 var randomRender = true,
     renderIndex = 0;
