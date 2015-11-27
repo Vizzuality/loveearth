@@ -219,6 +219,12 @@ cartodb.createLayer(map, "http://simbiotica.cartodb.com/api/v2/viz/c20e0df2-950d
 
   });
 
+cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7bbbb470-9239-11e5-9a6c-0ecd1babdde5/viz.json", {legends: false})
+  .addTo(map)
+  .done(function(layer) {
+    layer.setZIndex(995);
+  });
+
 var alreadyDone = [];
 map.on('movestart', function() {
   randomRender = false;
