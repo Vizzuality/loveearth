@@ -18,19 +18,20 @@ header ul li {
 header ul {
   position: absolute;
   right: 0;
-  height: 60px;
+  display: flex;
 }
 
 header ul li {
   font-weight: bold;
   font-size: 12px;
-  padding: 22px 20px;
   height: 60px;
   box-sizing: border-box;
   cursor: pointer;
   text-transform: uppercase;
   border-right: 1px solid #D7D7D9;
-  margin-left: -4px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
 }
 
 header ul li:last-of-type {
@@ -114,4 +115,38 @@ header ul li a:hover {
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-right: 0;
   border-left: 0;
+}
+
+.facebook-icon {
+  width: 10px;
+  height: 15px;
+}
+
+.twitter-icon {
+  width: 15px;
+  height: 13px;
+}
+
+.icon-container,
+.icon-container ul {
+  display: flex;
+  align-items: center;
+}
+
+.icon-container li {
+  margin-left: 15px;
+}
+
+.cartodb-icon {
+  width: 115px;
+}
+
+.fb-icon {
+  width: 21px;
+  fill: white;
+}
+
+.vizzuality-icon {
+  width: 100px;
+  margin-top: 5px;
 }
