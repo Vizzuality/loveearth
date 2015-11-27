@@ -1,17 +1,12 @@
 $(document).ready(function() {
 
 var PLACES = [
-  [42.553080, -0.878906, 2],
-  [27.994401, 94.877930, 5, "Asia"],
-  [-24.846565, 134.868164, 5, "Australia"],
-  [48.864715, 10.239258, 5, "Europe"],
-  [5.615986, 21.357422, 4, "Africa"],
-  [-10.228437, -57.700195, 5, "South America"],
-  [39.436193, -98.833008, 3, "North America"],
-  [37.815208598896255, -122.50511169433595, 14, "San Francisco"]
+  [42.553080, -0.878906, 2, "World"],
+  [37.815208598896255, -122.50511169433595, 13, "San Francisco"]
 ];
 
-var baseurl = this.baseurl = 'http://{s}.api.cartocdn.com/base-flatblue/{z}/{x}/{y}.png';
+var baseurl = this.baseurl = 'http://{s}.tiles.mapbox.com/v4/smbtc.7d2e3bf9/{z}/{x}/{y}@2x.png?access_token=pk.eyJ1Ijoic21idGMiLCJhIjoiVXM4REppNCJ9.pjaLujYj-fcCPv5evG_0uA';
+
 var map = this.map = L.map('map', {attributionControl: false, zoomControl: false}).setView(PLACES[0].slice(0,2), PLACES[0][2]);
 var basemap = this.basemap = L.tileLayer(baseurl).addTo(map);
 
@@ -28,9 +23,8 @@ var placeToggle = true, placeIndex = 1;
 var placeNameEl = document.querySelector('#place-name');
 placeNameEl.innerHTML = PLACES[0][3];
 var move = function() {
-  return;
   var currentIndex = placeIndex % (PLACES.length);
-  map.flyTo(PLACES[currentIndex].slice(0,2), PLACES[currentIndex][2], {duration: 3});
+  map.setView(PLACES[currentIndex].slice(0,2), PLACES[currentIndex][2], {duration: 3});
   placeIndex += 1;
 
   if (placeIndex === PLACES.length-1) {
@@ -57,105 +51,105 @@ $.get(baseQueryURL+query).done(function(results) {
   });
 });
 
-CustomTorqueLayer = L.TorqueLayer.extend({
-  render: function() {
-    if(this.hidden) return;
-    var t, tile, pos;
-    var canvas = this.getCanvas();
-    var ctx = canvas.getContext('2d');
+//CustomTorqueLayer = L.TorqueLayer.extend({
+  //render: function() {
+    //if(this.hidden) return;
+    //var t, tile, pos;
+    //var canvas = this.getCanvas();
+    //var ctx = canvas.getContext('2d');
 
-    var THICKNESS = Math.pow( 80, 2 ),
-        SPACING = 5,
-        MARGIN = 100,
-        COLOR = 255,
-        DRAG = 0.95,
-        EASE = 0.25,
-        dx, dy,
-        mx, my,
-        d, t, f,
-        a, b,
-        i, n,
-        w, h,
-        p, s,
-        r, c;
+    //var THICKNESS = Math.pow( 80, 2 ),
+        //SPACING = 5,
+        //MARGIN = 100,
+        //COLOR = 255,
+        //DRAG = 0.95,
+        //EASE = 0.25,
+        //dx, dy,
+        //mx, my,
+        //d, t, f,
+        //a, b,
+        //i, n,
+        //w, h,
+        //p, s,
+        //r, c;
 
-    w = canvas.width;
-    h = canvas.height;
+    //w = canvas.width;
+    //h = canvas.height;
 
-    var COLS = w / SPACING;
-    var ROWS = h / SPACING;
-    var NUM_PARTICLES = COLS * ROWS;
+    //var COLS = w / SPACING;
+    //var ROWS = h / SPACING;
+    //var NUM_PARTICLES = COLS * ROWS;
 
-    if (!this.dotsSetup) {
-      this.list = [];
+    //if (!this.dotsSetup) {
+      //this.list = [];
 
-      var particle = { vx: 0, vy: 0, x: 0, y: 0 };
+      //var particle = { vx: 0, vy: 0, x: 0, y: 0 };
 
-      for ( i = 0; i < NUM_PARTICLES; i++ ) {
+      //for ( i = 0; i < NUM_PARTICLES; i++ ) {
 
-        p = Object.create(particle);
-        p.x = p.ox = SPACING * ( i % COLS );
-        p.y = p.oy = SPACING * Math.floor( i / COLS );
+        //p = Object.create(particle);
+        //p.x = p.ox = SPACING * ( i % COLS );
+        //p.y = p.oy = SPACING * Math.floor( i / COLS );
 
-        this.list[i] = p;
-      }
+        //this.list[i] = p;
+      //}
 
-      this.dotsSetup = true;
-    }
+      //this.dotsSetup = true;
+    //}
 
-    this.renderer.getTilePos = this.getTilePos.bind(this);
+    //this.renderer.getTilePos = this.getTilePos.bind(this);
 
-        var mx = this.renderer.mx;
-        var my = this.renderer.my;
-        b = ( a = ctx.createImageData( w, h ) ).data;
-        for ( i = 0; i < NUM_PARTICLES; i++ ) {
-          p = this.list[i];
+        //var mx = this.renderer.mx;
+        //var my = this.renderer.my;
+        //b = ( a = ctx.createImageData( w, h ) ).data;
+        //for ( i = 0; i < NUM_PARTICLES; i++ ) {
+          //p = this.list[i];
 
-          d = ( dx = mx - p.x ) * dx + ( dy = my - p.y ) * dy;
-          f = -THICKNESS / (d*10);
+          //d = ( dx = mx - p.x ) * dx + ( dy = my - p.y ) * dy;
+          //f = -THICKNESS / (d*10);
 
-          if ( d < THICKNESS ) {
-            t = Math.atan2( dy, dx );
-            p.vx += f * Math.cos(t);
-            p.vy += f * Math.sin(t);
-          }
+          //if ( d < THICKNESS ) {
+            //t = Math.atan2( dy, dx );
+            //p.vx += f * Math.cos(t);
+            //p.vy += f * Math.sin(t);
+          //}
 
-          p.x += ( p.vx *= DRAG ) + (p.ox - p.x) * EASE;
-          p.y += ( p.vy *= DRAG ) + (p.oy - p.y) * EASE;
+          //p.x += ( p.vx *= DRAG ) + (p.ox - p.x) * EASE;
+          //p.y += ( p.vy *= DRAG ) + (p.oy - p.y) * EASE;
 
-          b[n = ( ~~p.x + ( ~~p.y * w ) ) * 4] = b[n+1] = b[n+2] = COLOR, b[n+3] = 255;
-        }
+          //b[n = ( ~~p.x + ( ~~p.y * w ) ) * 4] = b[n+1] = b[n+2] = COLOR, b[n+3] = 255;
+        //}
 
-        ctx.putImageData( a, 0, 0 );
-    if (randomRender !== false) {
-      for(t in this._tiles) {
-        tile = this._tiles[t];
-        if (tile) {
-          // clear cache
-          if (this.animator.isRunning()) {
-            tile._tileCache = null;
-          }
+        //ctx.putImageData( a, 0, 0 );
+    //if (randomRender !== false) {
+      //for(t in this._tiles) {
+        //tile = this._tiles[t];
+        //if (tile) {
+          //// clear cache
+          //if (this.animator.isRunning()) {
+            //tile._tileCache = null;
+          //}
 
-          pos = this.getTilePos(tile.coord);
-          ctx.setTransform(1, 0, 0, 1, pos.x, pos.y);
+          //pos = this.getTilePos(tile.coord);
+          //ctx.setTransform(1, 0, 0, 1, pos.x, pos.y);
 
-          if (tile._tileCache) {
-            // when the tile has a cached image just render it and avoid to render
-            // all the points
-            this.renderer._ctx.drawImage(tile._tileCache, 0, 0);
-          } else {
-            this.renderer.renderTile(tile, this.key);
-          }
-        }
-      }
-      this.renderer.applyFilters();
-    } else {
-      this.renderer.mx = undefined;
-      this.renderer.my = undefined;
-      availableImages = [];
-    }
-  }
-});
+          //if (tile._tileCache) {
+            //// when the tile has a cached image just render it and avoid to render
+            //// all the points
+            //this.renderer._ctx.drawImage(tile._tileCache, 0, 0);
+          //} else {
+            //this.renderer.renderTile(tile, this.key);
+          //}
+        //}
+      //}
+      //this.renderer.applyFilters();
+    //} else {
+      //this.renderer.mx = undefined;
+      //this.renderer.my = undefined;
+      //availableImages = [];
+    //}
+  //}
+//});
 
 var CARTOCSS = [
   'Map {',
@@ -182,51 +176,51 @@ var CARTOCSS = [
   '}'
 ].join('\n');
 
-var torqueLayer = new CustomTorqueLayer({
-  user       : 'aarondb',
-  table      : 'instadb_loveearth',
-  cartocss: CARTOCSS,
-  sql: 'SELECT * FROM instadb_loveearth WHERE EXTRACT(year FROM "created_time") = 2015'
-});
+//var torqueLayer = new CustomTorqueLayer({
+  //user       : 'aarondb',
+  //table      : 'instadb_loveearth',
+  //cartocss: CARTOCSS,
+  //sql: 'SELECT * FROM instadb_loveearth WHERE EXTRACT(year FROM "created_time") = 2015'
+//});
 
-torqueLayer.setZIndex(997);
+//torqueLayer.setZIndex(997);
 
-torqueLayer.error(function(err){
-  for(error in err){
-    console.warn(err[error]);
-  }
-});
-torqueLayer.addTo(map);
-torqueLayer.play()
+//torqueLayer.error(function(err){
+  //for(error in err){
+    //console.warn(err[error]);
+  //}
+//});
+//torqueLayer.addTo(map);
+//torqueLayer.play()
 
-cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7bbbb470-9239-11e5-9a6c-0ecd1babdde5/viz.json", {legends: false})
+cartodb.createLayer(map, "http://simbiotica.cartodb.com/api/v2/viz/c20e0df2-950d-11e5-a937-0e3ff518bd15/viz.json", {legends: false})
   .addTo(map)
   .done(function(layer) {
-    layer.setZIndex(996);
+    layer.setZIndex(997);
+    layer.on('change:time', function(change) {
+      var date = moment(change.time);
+      allInstaImages.forEach(function(insta) {
+        var range = moment.range(insta.created_time.clone().subtract(6, 'hours'), insta.created_time.clone().add(6, 'hours'));
+        if (date.within(range) && alreadyDone.indexOf(insta) < 0) {
+          var coords = map.latLngToLayerPoint(new L.LatLng(insta.lat, insta.lon));
+          insta.x = coords.x;
+          insta.y = coords.y;
+          availableImages.push(insta);
+          alreadyDone.push(insta);
+        }
+      });
+    });
+
   });
 
 var alreadyDone = [];
-torqueLayer.on('change:time', function(change) {
-  var date = moment(change.time);
-  allInstaImages.forEach(function(insta) {
-    var range = moment.range(insta.created_time.clone().subtract(6, 'hours'), insta.created_time.clone().add(6, 'hours'));
-    if (date.within(range) && alreadyDone.indexOf(insta) < 0) {
-      var coords = map.latLngToLayerPoint(new L.LatLng(insta.lat, insta.lon));
-      insta.x = coords.x;
-      insta.y = coords.y;
-      availableImages.push(insta);
-      alreadyDone.push(insta);
-    }
-  });
-});
-
 map.on('movestart', function() {
   randomRender = false;
-  torqueLayer.pause();
+  //torqueLayer.pause();
 });
 
 map.on('zoomend', function(event) {
-  torqueLayer.play();
+  //torqueLayer.play();
 });
 
 map.on('moveend', function() {
