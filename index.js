@@ -193,11 +193,17 @@ var CARTOCSS = [
 //torqueLayer.addTo(map);
 //torqueLayer.play()
 
+var timelineRemoved = false;
 cartodb.createLayer(map, "http://simbiotica.cartodb.com/api/v2/viz/c20e0df2-950d-11e5-a937-0e3ff518bd15/viz.json", {legends: false})
   .addTo(map)
   .done(function(layer) {
     layer.setZIndex(997);
     layer.on('change:time', function(change) {
+      if (!timelineRemoved) {
+        $('.cartodb-timeslider').remove();
+        timelineRemoved = true;
+      }
+
       var date = moment(change.time);
       allInstaImages.forEach(function(insta) {
         var range = moment.range(insta.created_time.clone().subtract(6, 'hours'), insta.created_time.clone().add(6, 'hours'));
