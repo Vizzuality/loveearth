@@ -1,19 +1,20 @@
 var PLACES = [
   [27.994401, 94.877930, 5, "Asia"],
-  [48.864715, 10.239258, 5, "Europe"],
-  [39.436193, -98.833008, 5, "North America"],
   [-24.846565, 134.868164, 5, "Australia"],
+  [48.864715, 10.239258, 5, "Europe"],
   [5.615986, 21.357422, 4, "Africa"],
-  [-10.228437, -57.700195, 5, "South America"]
+  [-10.228437, -57.700195, 5, "South America"],
+  [39.436193, -98.833008, 3, "North America"],
+  [37.815208598896255, -122.50511169433595, 14, "San Francisco"]
 ];
 
 var baseurl = this.baseurl = 'http://{s}.api.cartocdn.com/base-flatblue/{z}/{x}/{y}.png';
 var map = this.map = L.map('map', {attributionControl: false, zoomControl: false}).setView(PLACES[0].slice(0,2), PLACES[0][2]);
 var basemap = this.basemap = L.tileLayer(baseurl).addTo(map);
 
-//var satelliteUrl = 'tiles/{z}/{x}/{y}.png';
-//var satellite = L.tileLayer(satelliteUrl, {errorTileUrl: 'none.png', tms: true}).addTo(map);
-//satellite.setZIndex(997);
+var satelliteUrl = 'tiles/{z}/{x}/{y}.png';
+var satellite = L.tileLayer(satelliteUrl, {errorTileUrl: 'none.png', tms: true}).addTo(map);
+satellite.setZIndex(996);
 
 map.dragging.disable();
 map.touchZoom.disable();
@@ -23,18 +24,38 @@ map.scrollWheelZoom.disable()
 var placeToggle = true, placeIndex = 1;
 var placeNameEl = document.querySelector('#place-name');
 placeNameEl.innerHTML = PLACES[0][3];
-setInterval(function() {
-  var currentIndex = placeIndex % (PLACES.length-1);
-  map.flyTo(PLACES[currentIndex].slice(0,2), PLACES[currentIndex][2], {duration: 5});
+var move = function() {
+  var currentIndex = placeIndex % (PLACES.length);
+  map.flyTo(PLACES[currentIndex].slice(0,2), PLACES[currentIndex][2], {duration: 3});
   placeIndex += 1;
 
+  if (placeIndex === PLACES.length-1) {
+    setTimeout(move, 20000);
+  } else {
+    setTimeout(move, 10000);
+  }
+
   placeNameEl.innerHTML = PLACES[currentIndex][3];
-}, 15000);
+}
+setTimeout(move, 10000);
 
 var randomRender = true,
     renderIndex = 0;
 
 var availableImages = [];
+var allInstaImages = [];
+var baseQueryURL = "https://aarondb.cartodb.com/api/v1/sql?q=";
+$.get(baseQueryURL + "SELECT COUNT(*) FROM aarondb.instadb_loveearth").then(function(countResults) {
+  var count = countResults.rows[0].count;
+  var query = "SELECT cartodb_id, ST_X(the_geom) AS lon, ST_Y(the_geom) AS lat, created_time, thumbnail FROM aarondb.instadb_loveearth LIMIT "+(count/5)+" OFFSET floor(random()*"+count+")";
+  $.get(baseQueryURL+query).done(function(results) {
+    allInstaImages = results.rows.map(function(insta) {
+      insta.created_time = moment(insta.created_time);
+      return insta;
+    });
+  });
+});
+
 CustomTorqueLayer = L.TorqueLayer.extend({
   render: function() {
     if(this.hidden) return;
@@ -43,7 +64,7 @@ CustomTorqueLayer = L.TorqueLayer.extend({
     var ctx = canvas.getContext('2d');
 
     var THICKNESS = Math.pow( 80, 2 ),
-        SPACING = 4,
+        SPACING = 5,
         MARGIN = 100,
         COLOR = 255,
         DRAG = 0.95,
@@ -67,6 +88,9 @@ CustomTorqueLayer = L.TorqueLayer.extend({
     if (!this.dotsSetup) {
       this.list = [];
 
+      this.renderer.mx = [];
+      this.renderer.my = [];
+
       var particle = { vx: 0, vy: 0, x: 0, y: 0 };
 
       for ( i = 0; i < NUM_PARTICLES; i++ ) {
@@ -83,37 +107,65 @@ CustomTorqueLayer = L.TorqueLayer.extend({
 
     this.renderer.getTilePos = this.getTilePos.bind(this);
 
-    if (randomRender !== false) {
-      if (renderIndex % 10 === 0) {
-        availableImages.push({
-          path: './image.jpg',
-          x: this.renderer.mx,
-          y: this.renderer.my
-        });
+    //if (randomRender !== false) {
+      //if (renderIndex % 10 === 0) {
+        //availableImages.push({
+          //path: './image.jpg',
+          //x: this.renderer.mx,
+          //y: this.renderer.my
+        //});
+      //}
+      //renderIndex++;
+    //}
+
+    if (this.renderer.mx.length > 0) {
+      var k = 0;
+      for (; k<this.renderer.mx.length; k+=1) {
+        var mx = this.renderer.mx.pop();
+        var my = this.renderer.my.pop();
+        b = ( a = ctx.createImageData( w, h ) ).data;
+        for ( i = 0; i < NUM_PARTICLES; i++ ) {
+          p = this.list[i];
+
+          d = ( dx = mx - p.x ) * dx + ( dy = my - p.y ) * dy;
+          f = -THICKNESS / (d*10);
+
+          if ( d < THICKNESS ) {
+            t = Math.atan2( dy, dx );
+            p.vx += f * Math.cos(t);
+            p.vy += f * Math.sin(t);
+          }
+
+          p.x += ( p.vx *= DRAG ) + (p.ox - p.x) * EASE;
+          p.y += ( p.vy *= DRAG ) + (p.oy - p.y) * EASE;
+
+          b[n = ( ~~p.x + ( ~~p.y * w ) ) * 4] = b[n+1] = b[n+2] = COLOR, b[n+3] = 255;
+        }
+
+        ctx.putImageData( a, 0, 0 );
       }
-      renderIndex++;
-    }
+    } else {
+      b = ( a = ctx.createImageData( w, h ) ).data;
+      for ( i = 0; i < NUM_PARTICLES; i++ ) {
+        p = this.list[i];
 
-    b = ( a = ctx.createImageData( w, h ) ).data;
-    for ( i = 0; i < NUM_PARTICLES; i++ ) {
-      p = this.list[i];
+        d = ( dx = mx - p.x ) * dx + ( dy = my - p.y ) * dy;
+        f = -THICKNESS / (d*10);
 
-      d = ( dx = this.renderer.mx - p.x ) * dx + ( dy = this.renderer.my - p.y ) * dy;
-      f = -THICKNESS / (d*10);
+        if ( d < THICKNESS ) {
+          t = Math.atan2( dy, dx );
+          p.vx += f * Math.cos(t);
+          p.vy += f * Math.sin(t);
+        }
 
-      if ( d < THICKNESS ) {
-        t = Math.atan2( dy, dx );
-        p.vx += f * Math.cos(t);
-        p.vy += f * Math.sin(t);
+        p.x += ( p.vx *= DRAG ) + (p.ox - p.x) * EASE;
+        p.y += ( p.vy *= DRAG ) + (p.oy - p.y) * EASE;
+
+        b[n = ( ~~p.x + ( ~~p.y * w ) ) * 4] = b[n+1] = b[n+2] = COLOR, b[n+3] = 255;
       }
 
-      p.x += ( p.vx *= DRAG ) + (p.ox - p.x) * EASE;
-      p.y += ( p.vy *= DRAG ) + (p.oy - p.y) * EASE;
-
-      b[n = ( ~~p.x + ( ~~p.y * w ) ) * 4] = b[n+1] = b[n+2] = COLOR, b[n+3] = 255;
+      ctx.putImageData( a, 0, 0 );
     }
-
-    ctx.putImageData( a, 0, 0 );
 
     if (randomRender !== false) {
       for(t in this._tiles) {
@@ -138,8 +190,8 @@ CustomTorqueLayer = L.TorqueLayer.extend({
       }
       this.renderer.applyFilters();
     } else {
-      this.renderer.mx = undefined;
-      this.renderer.my = undefined;
+      this.renderer.mx = [];
+      this.renderer.my = [];
       availableImages = [];
     }
   }
@@ -148,10 +200,13 @@ CustomTorqueLayer = L.TorqueLayer.extend({
 var CARTOCSS = [
   'Map {',
   '  -torque-time-attribute: "created_time";',
-  '  -torque-aggregation-function: "count(cartodb_id)";',
-  '  -torque-frame-count: 512;',
+  '  -torque-aggregation-function: "sum(likes)";',
+  '  -torque-frame-count: 2048;',
   '  -torque-animation-duration: 20;',
-  '  -torque-resolution: 1',
+  '  -torque-resolution: 8',
+  '}',
+  '[value>5] {',
+  '  marker-width: 6;',
   '}',
   '#layer {',
   '  marker-width: 3;',
@@ -173,7 +228,7 @@ var torqueLayer = new CustomTorqueLayer({
   cartocss: CARTOCSS
 });
 
-torqueLayer.setZIndex(996);
+torqueLayer.setZIndex(997);
 
 torqueLayer.error(function(err){
   for(error in err){
@@ -183,9 +238,21 @@ torqueLayer.error(function(err){
 torqueLayer.addTo(map);
 torqueLayer.play()
 
-//torqueLayer.on('change:time', function(change) {
-  //debugger
-//});
+cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7bbbb470-9239-11e5-9a6c-0ecd1babdde5/viz.json")
+  .addTo(map)
+  .done(function(layer) {
+    layer.setZIndex(10000);
+  });
+
+torqueLayer.on('change:time', function(change) {
+  var date = moment(change.time);
+  allInstaImages.forEach(function(insta) {
+    var range = moment.range(insta.created_time.subtract(5, 'days'), insta.created_time.add(5, 'days'));
+    if (range.contains(date)) {
+      debugger
+    }
+  });
+});
 
 map.on('movestart', function() {
   randomRender = false;
@@ -298,4 +365,4 @@ var ImageLayer = L.CanvasLayer.extend({
 
 var imageLayer = new ImageLayer();
 imageLayer.addTo(map);
-imageLayer.setZIndex(998);
+imageLayer.setZIndex(999);

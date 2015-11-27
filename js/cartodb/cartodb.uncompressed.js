@@ -5041,6 +5041,10 @@ L.TileLayer = L.Class.extend({
 		this._update();
 	},
 
+  _layerAdd: function(event) {
+    this.onAdd(event.target);
+  },
+
 	addTo: function (map) {
 		map.addLayer(this);
 		return this;
@@ -5605,6 +5609,10 @@ L.TileLayer.WMS = L.TileLayer.extend({
 		L.TileLayer.prototype.onAdd.call(this, map);
 	},
 
+  _layerAdd: function(event) {
+    this.onAdd(event.target);
+  },
+
 	getTileUrl: function (tilePoint) { // (Point, Number) -> String
 
 		var map = this._map,
@@ -5739,6 +5747,10 @@ L.ImageOverlay = L.Class.extend({
 
 		this._reset();
 	},
+
+  _layerAdd: function(event) {
+    this.onAdd(event.target);
+  },
 
 	onRemove: function (map) {
 		map.getPanes().overlayPane.removeChild(this._image);
@@ -6039,6 +6051,10 @@ L.Marker = L.Class.extend({
 			map.on('zoomanim', this._animateZoom, this);
 		}
 	},
+
+  _layerAdd: function(event) {
+    this.onAdd(event.target);
+  },
 
 	addTo: function (map) {
 		map.addLayer(this);
@@ -6431,6 +6447,10 @@ L.Popup = L.Class.extend({
 			this._source.fire('popupopen', {popup: this});
 		}
 	},
+
+  _layerAdd: function(event) {
+    this.onAdd(event.target);
+  },
 
 	addTo: function (map) {
 		map.addLayer(this);
@@ -6871,6 +6891,10 @@ L.LayerGroup = L.Class.extend({
 		this.eachLayer(map.addLayer, map);
 	},
 
+  _layerAdd: function(event) {
+    this.onAdd(event.target);
+  },
+
 	onRemove: function (map) {
 		this.eachLayer(map.removeLayer, map);
 		this._map = null;
@@ -7075,6 +7099,10 @@ L.Path = L.Class.extend({
 			'moveend': this._updatePath
 		}, this);
 	},
+
+  _layerAdd: function(event) {
+    this.onAdd(event.target);
+  },
 
 	addTo: function (map) {
 		map.addLayer(this);
@@ -10480,6 +10508,10 @@ L.Control = L.Class.extend({
 		return this;
 	},
 
+  _layerAdd: function(event) {
+    this.onAdd(event.target);
+  },
+
 	removeFrom: function (map) {
 		var pos = this.getPosition(),
 		    corner = map._controlCorners[pos];
@@ -10574,6 +10606,10 @@ L.Control.Zoom = L.Control.extend({
 
 		return container;
 	},
+
+  _layerAdd: function(event) {
+    this.onAdd(event.target);
+  },
 
 	onRemove: function (map) {
 		map.off('zoomend zoomlevelschange', this._updateDisabled, this);
@@ -10673,6 +10709,10 @@ L.Control.Attribution = L.Control.extend({
 
 		return this._container;
 	},
+
+  _layerAdd: function(event) {
+    this.onAdd(event.target);
+  },
 
 	onRemove: function (map) {
 		map
@@ -34565,6 +34605,10 @@ var LeafLetPlainLayerView = L.Class.extend({
     this.redraw();
   },
 
+  _layerAdd: function(event) {
+    this.onAdd(event.target);
+  },
+
   onRemove: function() {
     var div = this.leafletMap.getContainer()
     div.style.background = 'none';
@@ -34881,6 +34925,10 @@ L.CartoDBGroupLayerBase = L.TileLayer.extend({
       self.fire('added');
       self.options.added = true;
     });
+  },
+
+  _layerAdd: function(event) {
+    this.onAdd(event.target);
   },
 
 

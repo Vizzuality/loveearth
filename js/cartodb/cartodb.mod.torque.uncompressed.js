@@ -2037,7 +2037,7 @@ L.CanvasLayer = L.Class.extend({
       unloadInvisibleTiles: L.Browser.mobile,
       updateWhenIdle: L.Browser.mobile,
       tileLoader: false, // installs tile loading events
-      zoomAnimation: true
+      zoomAnimation: false
   },
 
   initialize: function (options) {
@@ -4800,8 +4800,8 @@ var Filters = require('./torque_filters');
              var x = tile.x[posIdx]- 3 + anchor;
              var y = tileMax - tile.y[posIdx] + anchor; // flip mercator
              var tilePos = this.getTilePos(tile.coord);
-             this.mx = x + tilePos.x;
-             this.my = y - 3 + tilePos.y;
+             this.mx.push(x + tilePos.x);
+             this.my.push(y - 3 + tilePos.y);
              ctx.drawImage(sp, x, y - (sp.height >> 1));
            }
           }
