@@ -1,4 +1,7 @@
+$(document).ready(function() {
+
 var PLACES = [
+  [42.553080, -0.878906, 2],
   [27.994401, 94.877930, 5, "Asia"],
   [-24.846565, 134.868164, 5, "Australia"],
   [48.864715, 10.239258, 5, "Europe"],
@@ -25,6 +28,7 @@ var placeToggle = true, placeIndex = 1;
 var placeNameEl = document.querySelector('#place-name');
 placeNameEl.innerHTML = PLACES[0][3];
 var move = function() {
+  return;
   var currentIndex = placeIndex % (PLACES.length);
   map.flyTo(PLACES[currentIndex].slice(0,2), PLACES[currentIndex][2], {duration: 3});
   placeIndex += 1;
@@ -45,14 +49,11 @@ var randomRender = true,
 var availableImages = [];
 var allInstaImages = [];
 var baseQueryURL = "https://aarondb.cartodb.com/api/v1/sql?q=";
-$.get(baseQueryURL + "SELECT COUNT(*) FROM aarondb.instadb_loveearth").then(function(countResults) {
-  var count = countResults.rows[0].count;
-  var query = "SELECT cartodb_id, ST_X(the_geom) AS lon, ST_Y(the_geom) AS lat, created_time, thumbnail FROM aarondb.instadb_loveearth LIMIT "+(count/5)+" OFFSET floor(random()*"+count+")";
-  $.get(baseQueryURL+query).done(function(results) {
-    allInstaImages = results.rows.map(function(insta) {
-      insta.created_time = moment(insta.created_time);
-      return insta;
-    });
+var query = "SELECT t.cartodb_id, ST_X(t.the_geom) AS lon, ST_Y(t.the_geom) AS lat, t.created_time, t.thumbnail FROM aarondb.instadb_loveearth t";
+$.get(baseQueryURL+query).done(function(results) {
+  allInstaImages = results.rows.map(function(insta) {
+    insta.created_time = moment(insta.created_time);
+    return insta;
   });
 });
 
@@ -88,9 +89,6 @@ CustomTorqueLayer = L.TorqueLayer.extend({
     if (!this.dotsSetup) {
       this.list = [];
 
-      this.renderer.mx = [];
-      this.renderer.my = [];
-
       var particle = { vx: 0, vy: 0, x: 0, y: 0 };
 
       for ( i = 0; i < NUM_PARTICLES; i++ ) {
@@ -107,22 +105,8 @@ CustomTorqueLayer = L.TorqueLayer.extend({
 
     this.renderer.getTilePos = this.getTilePos.bind(this);
 
-    //if (randomRender !== false) {
-      //if (renderIndex % 10 === 0) {
-        //availableImages.push({
-          //path: './image.jpg',
-          //x: this.renderer.mx,
-          //y: this.renderer.my
-        //});
-      //}
-      //renderIndex++;
-    //}
-
-    if (this.renderer.mx.length > 0) {
-      var k = 0;
-      for (; k<this.renderer.mx.length; k+=1) {
-        var mx = this.renderer.mx.pop();
-        var my = this.renderer.my.pop();
+        var mx = this.renderer.mx;
+        var my = this.renderer.my;
         b = ( a = ctx.createImageData( w, h ) ).data;
         for ( i = 0; i < NUM_PARTICLES; i++ ) {
           p = this.list[i];
@@ -143,30 +127,6 @@ CustomTorqueLayer = L.TorqueLayer.extend({
         }
 
         ctx.putImageData( a, 0, 0 );
-      }
-    } else {
-      b = ( a = ctx.createImageData( w, h ) ).data;
-      for ( i = 0; i < NUM_PARTICLES; i++ ) {
-        p = this.list[i];
-
-        d = ( dx = mx - p.x ) * dx + ( dy = my - p.y ) * dy;
-        f = -THICKNESS / (d*10);
-
-        if ( d < THICKNESS ) {
-          t = Math.atan2( dy, dx );
-          p.vx += f * Math.cos(t);
-          p.vy += f * Math.sin(t);
-        }
-
-        p.x += ( p.vx *= DRAG ) + (p.ox - p.x) * EASE;
-        p.y += ( p.vy *= DRAG ) + (p.oy - p.y) * EASE;
-
-        b[n = ( ~~p.x + ( ~~p.y * w ) ) * 4] = b[n+1] = b[n+2] = COLOR, b[n+3] = 255;
-      }
-
-      ctx.putImageData( a, 0, 0 );
-    }
-
     if (randomRender !== false) {
       for(t in this._tiles) {
         tile = this._tiles[t];
@@ -190,8 +150,8 @@ CustomTorqueLayer = L.TorqueLayer.extend({
       }
       this.renderer.applyFilters();
     } else {
-      this.renderer.mx = [];
-      this.renderer.my = [];
+      this.renderer.mx = undefined;
+      this.renderer.my = undefined;
       availableImages = [];
     }
   }
@@ -201,8 +161,8 @@ var CARTOCSS = [
   'Map {',
   '  -torque-time-attribute: "created_time";',
   '  -torque-aggregation-function: "sum(likes)";',
-  '  -torque-frame-count: 2048;',
-  '  -torque-animation-duration: 20;',
+  '  -torque-frame-count: 512;',
+  '  -torque-animation-duration: 40;',
   '  -torque-resolution: 8',
   '}',
   '[value>5] {',
@@ -225,7 +185,8 @@ var CARTOCSS = [
 var torqueLayer = new CustomTorqueLayer({
   user       : 'aarondb',
   table      : 'instadb_loveearth',
-  cartocss: CARTOCSS
+  cartocss: CARTOCSS,
+  sql: 'SELECT * FROM instadb_loveearth WHERE EXTRACT(year FROM "created_time") = 2015'
 });
 
 torqueLayer.setZIndex(997);
@@ -238,18 +199,23 @@ torqueLayer.error(function(err){
 torqueLayer.addTo(map);
 torqueLayer.play()
 
-cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7bbbb470-9239-11e5-9a6c-0ecd1babdde5/viz.json")
+cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7bbbb470-9239-11e5-9a6c-0ecd1babdde5/viz.json", {legends: false})
   .addTo(map)
   .done(function(layer) {
-    layer.setZIndex(10000);
+    layer.setZIndex(996);
   });
 
+var alreadyDone = [];
 torqueLayer.on('change:time', function(change) {
   var date = moment(change.time);
   allInstaImages.forEach(function(insta) {
-    var range = moment.range(insta.created_time.subtract(5, 'days'), insta.created_time.add(5, 'days'));
-    if (range.contains(date)) {
-      debugger
+    var range = moment.range(insta.created_time.clone().subtract(6, 'hours'), insta.created_time.clone().add(6, 'hours'));
+    if (date.within(range) && alreadyDone.indexOf(insta) < 0) {
+      var coords = map.latLngToLayerPoint(new L.LatLng(insta.lat, insta.lon));
+      insta.x = coords.x;
+      insta.y = coords.y;
+      availableImages.push(insta);
+      alreadyDone.push(insta);
     }
   });
 });
@@ -317,7 +283,7 @@ var ImageLayer = L.CanvasLayer.extend({
         imgSrc = undefined;
         ctx.restore();
       } else {
-        fadePercentage += 2;
+        fadePercentage += 10;
         ctx.globalAlpha = (1 - fadePercentage / 100);
       }
     }
@@ -345,7 +311,12 @@ var ImageLayer = L.CanvasLayer.extend({
 
         this.redraw();
       }.bind(this);
-      img.src = imgSrc.path;
+      img.onerror = function() {
+        this.redraw();
+        img = undefined;
+      }
+
+      img.src = imgSrc.thumbnail;
     } else {
       ctx.save();
 
@@ -366,3 +337,5 @@ var ImageLayer = L.CanvasLayer.extend({
 var imageLayer = new ImageLayer();
 imageLayer.addTo(map);
 imageLayer.setZIndex(999);
+
+});
