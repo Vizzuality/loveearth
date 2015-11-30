@@ -42,9 +42,6 @@ var move = function() {
 }
 setTimeout(move, PLACES[0][4]);
 
-var randomRender = true,
-    renderIndex = 0;
-
 var availableImages = [];
 var allInstaImages = [];
 var baseQueryURL = "https://aarondb.cartodb.com/api/v1/sql?q=";
@@ -56,18 +53,12 @@ $.get(baseQueryURL+query).done(function(results) {
   });
 });
 
-var timelineRemoved = false;
+var alreadyDone = [];
 cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7efc5190-8ec8-11e5-91f0-0e5db1731f59/viz.json", {legends: false})
   .addTo(map)
   .done(function(layer) {
     layer.setZIndex(997);
     layer.on('change:time', function(change) {
-      $('.cartodb-logo').remove();
-      if (!timelineRemoved) {
-        $('.cartodb-timeslider').remove();
-        timelineRemoved = true;
-      }
-
       var date = moment(change.time);
       allInstaImages.forEach(function(insta) {
         var range = moment.range(insta.created_time.clone().subtract(6, 'hours'), insta.created_time.clone().add(6, 'hours'));
@@ -94,15 +85,6 @@ cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7bbbb470-9239-11
     layer.setZIndex(994);
   });
 
-var alreadyDone = [];
-map.on('movestart', function() {
-  randomRender = false;
-});
-
-map.on('click', function() {
-  randomRender = true;
-});
-
 var easeInOutCirc = function(currentIteration, startValue, changeInValue, totalIterations) {
   if ((currentIteration /= totalIterations / 2) < 1) {
     return changeInValue / 2 * (1 - Math.sqrt(1 - currentIteration * currentIteration)) + startValue;
@@ -125,15 +107,6 @@ var ImageLayer = L.CanvasLayer.extend({
   render: function() {
     var canvas = this.getCanvas();
     var ctx = canvas.getContext('2d');
-
-    if (randomRender === false) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      imageRendered = false;
-      fadePercentage = 0;
-      img = undefined;
-      imgSrc = undefined;
-      return this.redraw();
-    }
 
     if (!imageRendered) {
       ctx.globalAlpha = 1;

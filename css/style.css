@@ -61,6 +61,7 @@ footer > ul li a:hover {
 }
 
 #map {
+  background-color: #242426;
   position: absolute;
   left: 0;
   right: 0;
@@ -208,4 +209,85 @@ div.cartodb-tooltip-content-wrapper.dark p:first-of-type {
 
 div.cartodb-tooltip-content {
   padding: 40px 30px;
+}
+
+.cartodb-timeslider,
+.cartodb-logo,
+.leaflet-control-attribution {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  .map-info {
+    left: 20px;
+    top: 20px;
+    right: 20px;
+  }
+
+  .map-info-hashtag {
+    font-size: 25px;
+  }
+
+  .cartodb-icon {
+    width: 65px;
+  }
+
+  .vizzuality-icon {
+    width: 75px;
+    margin-top: -2px;
+  }
+
+  .pl-icon,
+  .fb-icon {
+    margin-top: -4px;
+  }
+
+  .facebook-icon,
+  .twitter-icon {
+    width: auto;
+    height: auto;
+  }
+
+  .icon-container li,
+  .icon-container ul {
+    margin: 0;
+  }
+
+  .icon-container li {
+    margin-right: 10px;
+  }
+
+  .icon-container h3 {
+    display: none;
+  }
+}
+
+@media (max-width: 320px) {
+  .map-info {
+    padding: 20px 25px;
+  }
+
+  .map-info h2 {
+    font-size: 10px;
+  }
+
+  .map-info-hashtag {
+    font-size: 20px;
+  }
+
+  .cartodb-icon {
+    width: 50px;
+  }
+
+  .vizzuality-icon {
+    width: 57px;
+  }
+
+  .pl-icon {
+    width: 19px;
+  }
+
+  .fb-icon {
+    width: 14px;
+  }
 }
