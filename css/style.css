@@ -183,27 +183,27 @@ div.cartodb-tooltip {
   text-transform: uppercase;
 }
 
-div.cartodb-tooltip-content-wrapper.dark {
+div.cartodb-tooltip-content-wrapper {
   background: #293A7D;
 }
 
-div.cartodb-tooltip-content-wrapper.dark h4 {
+div.cartodb-tooltip-content-wrapper h4 {
   color: white;
   font-size: 12px;
 }
 
-div.cartodb-tooltip-content-wrapper.dark p,
-div.cartodb-tooltip-content-wrapper.dark h4 {
+div.cartodb-tooltip-content-wrapper p,
+div.cartodb-tooltip-content-wrapper h4 {
   font-family: 'Roboto', sans-serif;
 }
 
-div.cartodb-tooltip-content-wrapper.dark p {
+div.cartodb-tooltip-content-wrapper p {
   color: white;
   font-size: 30px;
   font-weight: bold;
 }
 
-div.cartodb-tooltip-content-wrapper.dark p:first-of-type {
+div.cartodb-tooltip-content-wrapper p:first-of-type {
   margin-bottom: 20px;
 }
 
