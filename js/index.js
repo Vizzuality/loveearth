@@ -58,7 +58,12 @@ cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7efc5190-8ec8-11
   .addTo(map)
   .done(function(layer) {
     layer.setZIndex(997);
+    var timeBounds = layer.getTimeBounds();
     layer.on('change:time', function(change) {
+      if (change.step === timeBounds.steps-1) {
+        alreadyDone = [];
+      }
+
       var date = moment(change.time);
       allInstaImages.forEach(function(insta) {
         var range = moment.range(insta.created_time.clone().subtract(6, 'hours'), insta.created_time.clone().add(6, 'hours'));
