@@ -24,7 +24,6 @@ var labelsUrl = 'http://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.p
 var labels = L.tileLayer(labelsUrl).addTo(map);
 labels.setZIndex(998);
 
-
 map.dragging.disable();
 map.touchZoom.disable();
 map.doubleClickZoom.disable();
@@ -63,6 +62,7 @@ cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7efc5190-8ec8-11
   .done(function(layer) {
     layer.setZIndex(997);
     layer.on('change:time', function(change) {
+      $('.cartodb-logo').remove();
       if (!timelineRemoved) {
         $('.cartodb-timeslider').remove();
         timelineRemoved = true;
@@ -180,7 +180,7 @@ var ImageLayer = L.CanvasLayer.extend({
       img.onerror = function() {
         this.redraw();
         img = undefined;
-      }
+      }.bind(this);
 
       img.src = imgSrc.thumbnail;
     } else {
