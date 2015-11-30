@@ -177,6 +177,10 @@ footer > ul li a:hover {
   width: 30px;
 }
 
+.instagram-icon {
+  width: 23px;
+}
+
 div.cartodb-tooltip {
   width: 300px;
   max-width: none;
@@ -289,5 +293,10 @@ div.cartodb-tooltip-content {
 
   .fb-icon {
     width: 14px;
+  }
+
+  .instagram-icon {
+    width: 16px;
+    margin-top: -3px;
   }
 }
