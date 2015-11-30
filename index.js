@@ -72,11 +72,15 @@ cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7efc5190-8ec8-11
       allInstaImages.forEach(function(insta) {
         var range = moment.range(insta.created_time.clone().subtract(6, 'hours'), insta.created_time.clone().add(6, 'hours'));
         if (date.within(range) && alreadyDone.indexOf(insta) < 0) {
-          var coords = map.latLngToLayerPoint(new L.LatLng(insta.lat, insta.lon));
-          insta.x = coords.x;
-          insta.y = coords.y;
-          availableImages.push(insta);
-          alreadyDone.push(insta);
+          var point = new L.LatLng(insta.lat, insta.lon);
+
+          if (map.getBounds().contains(point)) {
+            var coords = map.latLngToLayerPoint(point);
+            insta.x = coords.x;
+            insta.y = coords.y;
+            availableImages.push(insta);
+            alreadyDone.push(insta);
+          }
         }
       });
     });
