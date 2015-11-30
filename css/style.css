@@ -175,3 +175,37 @@ footer > ul li a:hover {
 .pl-icon {
   width: 30px;
 }
+
+div.cartodb-tooltip {
+  width: 300px;
+  max-width: none;
+  text-transform: uppercase;
+}
+
+div.cartodb-tooltip-content-wrapper.dark {
+  background: #293A7D;
+}
+
+div.cartodb-tooltip-content-wrapper.dark h4 {
+  color: white;
+  font-size: 12px;
+}
+
+div.cartodb-tooltip-content-wrapper.dark p,
+div.cartodb-tooltip-content-wrapper.dark h4 {
+  font-family: 'Roboto', sans-serif;
+}
+
+div.cartodb-tooltip-content-wrapper.dark p {
+  color: white;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+div.cartodb-tooltip-content-wrapper.dark p:first-of-type {
+  margin-bottom: 20px;
+}
+
+div.cartodb-tooltip-content {
+  padding: 40px 30px;
+}
