@@ -13,8 +13,12 @@ var map = this.map = L.map('map', {attributionControl: false, zoomControl: false
 var basemap = this.basemap = L.tileLayer(baseurl).addTo(map);
 
 var satelliteUrl = 'https://tiles0.planet.com/v0/mosaics/landsat8_toa_rgb_mosaic/{z}/{x}/{y}.png?api_key=7e2b6bec147f45da89e2d1de6ceee79f';
-var satellite = L.tileLayer(satelliteUrl, {minZoom: 6, errorTileUrl: 'none.png'}).addTo(map);
-satellite.setZIndex(996);
+var satellite = L.tileLayer(satelliteUrl, {minZoom: 6, maxZoom: 6, errorTileUrl: 'none.png'}).addTo(map);
+satellite.setZIndex(995);
+
+var deepSatelliteUrl = 'https://tiles0.planet.com/v0/mosaics/open_california_hybrid_mosaic/{z}/{x}/{y}.png?api_key=7e2b6bec147f45da89e2d1de6ceee79f';
+var deepSatellite = L.tileLayer(deepSatelliteUrl, {minZoom: 6, errorTileUrl: 'none.png'}).addTo(map);
+deepSatellite.setZIndex(996);
 
 map.dragging.disable();
 map.touchZoom.disable();
@@ -78,7 +82,7 @@ cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7bbbb470-9239-11
   .addTo(map)
   .done(function(layer) {
     layer.options.maxZoom = 5;
-    layer.setZIndex(995);
+    layer.setZIndex(994);
   });
 
 var alreadyDone = [];
