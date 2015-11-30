@@ -2,12 +2,12 @@ $(document).ready(function() {
 
 var PLACES = [
   [42.553080, -0.878906, 2, "World", 10000],
-  [35.44277092585766, -120.22338867187499, 6, "California", 10000],
-  [34.061761, -118.247223, 11, "Los Angeles", 10000],
-  [34.193630, -118.672943, 12, "Los Angeles", 10000],
+  [35.44277092585766, -120.22338867187499, 6, "California", 15000],
+  [34.061761, -118.247223, 11, "Los Angeles", 20000],
+  [34.193630, -118.672943, 12, "Los Angeles", 20000],
 ];
 
-var baseurl = this.baseurl = 'http://{s}.tiles.mapbox.com/v4/smbtc.7d2e3bf9/{z}/{x}/{y}@2x.png?access_token=pk.eyJ1Ijoic21idGMiLCJhIjoiVXM4REppNCJ9.pjaLujYj-fcCPv5evG_0uA';
+var baseurl = this.baseurl = 'http://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png';
 
 var map = this.map = L.map('map', {attributionControl: false, zoomControl: false}).setView(PLACES[0].slice(0,2), PLACES[0][2]);
 var basemap = this.basemap = L.tileLayer(baseurl).addTo(map);
@@ -19,6 +19,11 @@ satellite.setZIndex(995);
 var deepSatelliteUrl = 'https://tiles0.planet.com/v0/mosaics/open_california_hybrid_mosaic/{z}/{x}/{y}.png?api_key=7e2b6bec147f45da89e2d1de6ceee79f';
 var deepSatellite = L.tileLayer(deepSatelliteUrl, {minZoom: 6, errorTileUrl: 'none.png'}).addTo(map);
 deepSatellite.setZIndex(996);
+
+var labelsUrl = 'http://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png';
+var labels = L.tileLayer(labelsUrl).addTo(map);
+labels.setZIndex(998);
+
 
 map.dragging.disable();
 map.touchZoom.disable();
