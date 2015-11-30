@@ -10,8 +10,8 @@ var baseurl = this.baseurl = 'http://{s}.tiles.mapbox.com/v4/smbtc.7d2e3bf9/{z}/
 var map = this.map = L.map('map', {attributionControl: false, zoomControl: false}).setView(PLACES[0].slice(0,2), PLACES[0][2]);
 var basemap = this.basemap = L.tileLayer(baseurl).addTo(map);
 
-var satelliteUrl = 'tiles/{z}/{x}/{y}.png';
-var satellite = L.tileLayer(satelliteUrl, {errorTileUrl: 'none.png', tms: true}).addTo(map);
+var satelliteUrl = 'https://tiles0.planet.com/v0/mosaics/open_california_re_20150601_20150831/{z}/{x}/{y}.png?api_key=7e2b6bec147f45da89e2d1de6ceee79f';
+var satellite = L.tileLayer(satelliteUrl, {bounds: [[37.86767146248696, -122.39009857177734], [37.7627084265813, -122.62029647827148]], errorTileUrl: 'none.png'}).addTo(map);
 satellite.setZIndex(996);
 
 map.dragging.disable();
@@ -194,7 +194,7 @@ var CARTOCSS = [
 //torqueLayer.play()
 
 var timelineRemoved = false;
-cartodb.createLayer(map, "http://simbiotica.cartodb.com/api/v2/viz/c20e0df2-950d-11e5-a937-0e3ff518bd15/viz.json", {legends: false})
+cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7efc5190-8ec8-11e5-91f0-0e5db1731f59/viz.json", {legends: false})
   .addTo(map)
   .done(function(layer) {
     layer.setZIndex(997);
