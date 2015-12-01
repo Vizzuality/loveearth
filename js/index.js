@@ -13,16 +13,20 @@ var map = this.map = L.map('map', {attributionControl: false, zoomControl: false
 var basemap = this.basemap = L.tileLayer(baseurl).addTo(map);
 
 var satelliteUrl = 'https://tiles0.planet.com/v0/mosaics/landsat8_toa_rgb_mosaic/{z}/{x}/{y}.png?api_key=7e2b6bec147f45da89e2d1de6ceee79f';
-var satellite = L.tileLayer(satelliteUrl, {minZoom: 6, maxZoom: 6, errorTileUrl: 'none.png'}).addTo(map);
+var satellite = L.tileLayer(satelliteUrl, {minZoom: 6, maxZoom: 6}).addTo(map);
 satellite.setZIndex(995);
 
 var deepSatelliteUrl = 'https://tiles0.planet.com/v0/mosaics/open_california_hybrid_mosaic/{z}/{x}/{y}.png?api_key=7e2b6bec147f45da89e2d1de6ceee79f';
-var deepSatellite = L.tileLayer(deepSatelliteUrl, {minZoom: 6, errorTileUrl: 'none.png'}).addTo(map);
+var deepSatellite = L.tileLayer(deepSatelliteUrl, {minZoom: 6}).addTo(map);
 deepSatellite.setZIndex(996);
 
 var labelsUrl = 'http://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png';
-var labels = L.tileLayer(labelsUrl).addTo(map);
+var labels = L.tileLayer(labelsUrl, {maxZoom: 5}).addTo(map);
 labels.setZIndex(998);
+
+var lightLabelsUrl = 'http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png';
+var lightLabels = L.tileLayer(lightLabelsUrl, {minZoom: 6}).addTo(map);
+lightLabels.setZIndex(998);
 
 map.dragging.disable();
 map.touchZoom.disable();
@@ -32,15 +36,26 @@ map.scrollWheelZoom.disable()
 var placeToggle = true, placeIndex = 1;
 var placeNameEl = document.querySelector('#place-name');
 placeNameEl.innerHTML = PLACES[0][3];
+var placeTimeout;
 var move = function() {
   var currentIndex = placeIndex % (PLACES.length);
   map.setView(PLACES[currentIndex].slice(0,2), PLACES[currentIndex][2], {duration: 3});
-  setTimeout(move, PLACES[currentIndex][4]);
+  placeTimeout = setTimeout(move, PLACES[currentIndex][4]);
   placeNameEl.innerHTML = PLACES[currentIndex][3];
 
   placeIndex += 1;
 }
-setTimeout(move, PLACES[0][4]);
+placeTimeout = setTimeout(move, PLACES[0][4]);
+
+var toggleMovement = function() {
+  if (placeTimeout !== undefined) {
+    clearTimeout(placeTimeout);
+    placeTimeout = undefined;
+  } else {
+    var currentIndex = placeIndex % (PLACES.length);
+    placeTimeout = setTimeout(move, PLACES[currentIndex][4]);
+  }
+};
 
 var availableImages = [];
 var allInstaImages = [];
@@ -53,11 +68,33 @@ $.get(baseQueryURL+query).done(function(results) {
   });
 });
 
+var showImages = true;
+var torqueLayer;
+$('#toggle-torque').on('click', function() {
+  torqueLayer.toggle();
+  toggleMovement();
+  showImages = !showImages;
+});
+
+$('#close-modal, .overlay').on('click', function() {
+  $('.overlay').fadeOut();
+
+  if (torqueLayer !== undefined) {
+    torqueLayer.play();
+  }
+});
+
+$('#open-modal').on('click', function() {
+  $('.overlay').fadeIn();
+});
+
 var alreadyDone = [];
 cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7efc5190-8ec8-11e5-91f0-0e5db1731f59/viz.json", {legends: false})
   .addTo(map)
   .done(function(layer) {
+    torqueLayer = layer;
     layer.setZIndex(997);
+    layer.pause();
     var timeBounds = layer.getTimeBounds();
     layer.on('change:time', function(change) {
       if (change.step === timeBounds.steps-1) {
@@ -112,6 +149,12 @@ var ImageLayer = L.CanvasLayer.extend({
   render: function() {
     var canvas = this.getCanvas();
     var ctx = canvas.getContext('2d');
+
+    if (showImages === false) {
+      ctx.restore();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      return this.redraw();
+    }
 
     if (!imageRendered) {
       ctx.globalAlpha = 1;
