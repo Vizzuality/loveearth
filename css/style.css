@@ -1,6 +1,49 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-size: 12px;
   font-family: 'Roboto', sans-serif;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 1002;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-modal {
+  width: 900px;
+  height: 600px;
+  background: white;
+  text-align: center;
+  padding: 0 90px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-modal h1 {
+  color: #5B78C9;
+  font-size: 50px;
+  margin-bottom: 60px;
+  width: 400px;
+}
+
+.about-modal h2 {
+  font-weight: normal;
+  font-size: 16px;
 }
 
 footer {
@@ -160,8 +203,7 @@ footer > ul li a:hover {
 }
 
 .cartodb-icon {
-  width: 115px;
-  margin-top: -4px;
+  width: 85px;
 }
 
 .fb-icon {
@@ -171,6 +213,7 @@ footer > ul li a:hover {
 
 .vizzuality-icon {
   width: 100px;
+  margin-right: 15px;
 }
 
 .pl-icon {
