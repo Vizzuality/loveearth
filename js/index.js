@@ -76,8 +76,32 @@ $('#toggle-torque').on('click', function() {
   showImages = !showImages;
 });
 
+function createCookie(name, value) {
+  document.cookie = name+"="+value+"; path=/";
+}
+
+function readCookie(name) {
+  var nameEQ = name + "=";
+  var ca = document.cookie.split(';');
+  for(var i=0;i < ca.length;i++) {
+    var c = ca[i];
+    while (c.charAt(0) === ' ') {
+      c = c.substring(1,c.length);
+    }
+    if (c.indexOf(nameEQ) === 0) {
+      return c.substring(nameEQ.length,c.length);
+    }
+  }
+  return null;
+}
+
+if (readCookie('seenmodal') != 'yes') {
+  $('.overlay').css('display', 'flex');
+};
+
 $('#close-modal, .overlay').on('click', function() {
   $('.overlay').fadeOut();
+  createCookie('seenmodal', 'yes');
 
   if (torqueLayer !== undefined) {
     torqueLayer.play();
@@ -94,7 +118,11 @@ cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7efc5190-8ec8-11
   .done(function(layer) {
     torqueLayer = layer;
     layer.setZIndex(997);
-    layer.pause();
+
+    if (readCookie('seenmodal') != 'yes') {
+      layer.pause();
+    }
+
     var timeBounds = layer.getTimeBounds();
     layer.on('change:time', function(change) {
       if (change.step === timeBounds.steps-1) {
