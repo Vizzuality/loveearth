@@ -83,7 +83,7 @@ cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7efc5190-8ec8-11
 
   });
 
-cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7bbbb470-9239-11e5-9a6c-0ecd1babdde5/viz.json", {legends: false})
+cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/c613ce5a-9238-11e5-a848-0e31c9be1b51/viz.json", {legends: false})
   .addTo(map)
   .done(function(layer) {
     layer.options.maxZoom = 5;
