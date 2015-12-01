@@ -46,6 +46,33 @@ body {
   font-size: 16px;
 }
 
+.about-modal p {
+  margin-top: 50px;
+}
+
+.modal-btn {
+  display: inline-flex;
+  width: 200px;
+  background: #34D3CC;
+  color: white;
+  text-transform: uppercase;
+  text-decoration: none;
+  height: 50px;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn {
+  display: inline-flex;
+  padding: 10px 20px;
+  background: #34D3CC;
+  color: white;
+  text-transform: uppercase;
+  text-decoration: none;
+  justify-content: center;
+  align-items: center;
+}
+
 footer {
   display: flex;
   align-items: center;
@@ -78,7 +105,6 @@ footer > ul li {
   border-left: 1px solid #D7D7D9;
   display: flex;
   align-items: center;
-  padding: 0 20px;
 }
 
 footer > ul li:hover {
@@ -93,9 +119,9 @@ footer > ul li a {
 
 footer > ul li,
 footer > ul li a {
-  -webkit-transition: background 0.2s linear;
-  -moz-transition: background 0.2s linear;
-  transition: background 0.2s linear;
+  -webkit-transition: background-color 0.2s linear;
+  -moz-transition: background-color 0.2s linear;
+  transition: background-color 0.2s linear;
 }
 
 footer > ul li:hover a,
@@ -168,14 +194,30 @@ footer > ul li a:hover {
   border-left: 0;
 }
 
+footer > ul li a {
+  display: inline-block;
+  width: 50px;
+  height: 60px;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  background-size: 10px 15px;
+}
+
 .facebook-icon {
-  width: 10px;
-  height: 15px;
+  background-image: url(../img/facebookicon.svg);
+}
+
+footer > ul li a:hover.facebook-icon {
+  background-image: url(../img/facebookicon_white.svg);
 }
 
 .twitter-icon {
-  width: 15px;
-  height: 13px;
+  background-image: url(../img/twittericon.svg);
+  background-size: 15px 20px;
+}
+
+footer > ul li a:hover.twitter-icon {
+  background-image: url(../img/twittericon_white.svg);
 }
 
 .icon-container h3 {
