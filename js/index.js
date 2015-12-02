@@ -71,6 +71,7 @@ $.get(baseQueryURL+query).done(function(results) {
 var showImages = true;
 var torqueLayer;
 $('#toggle-torque').on('click', function() {
+  $(this).toggleClass('pause');
   torqueLayer.toggle();
   toggleMovement();
   showImages = !showImages;
@@ -101,15 +102,16 @@ if (readCookie('seenmodal') != 'yes') {
 
 $('#close-modal, .overlay').on('click', function() {
   $('.overlay').fadeOut();
-  createCookie('seenmodal', 'yes');
 
-  if (torqueLayer !== undefined) {
+  if (torqueLayer !== undefined && readCookie('seenmodal') != 'yes') {
     torqueLayer.play();
   }
+
+  createCookie('seenmodal', 'yes');
 });
 
 $('#open-modal').on('click', function() {
-  $('.overlay').fadeIn();
+  $('.overlay').css('display', 'flex');
 });
 
 var alreadyDone = [];
@@ -175,14 +177,12 @@ var img, imgSrc;
 
 var ImageLayer = L.CanvasLayer.extend({
   render: function() {
-    var canvas = this.getCanvas();
-    var ctx = canvas.getContext('2d');
-
     if (showImages === false) {
-      ctx.restore();
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
       return this.redraw();
     }
+
+    var canvas = this.getCanvas();
+    var ctx = canvas.getContext('2d');
 
     if (!imageRendered) {
       ctx.globalAlpha = 1;

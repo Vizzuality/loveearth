@@ -138,14 +138,40 @@ footer > ul li a:hover {
   bottom: 60px;
 }
 
+.toggle-torque-container {
+  margin-left: 30px;
+  border-left: 1px solid #DEDEE1;
+  padding-left: 25px;
+}
+
+.toggle-torque {
+  background-image: url(../img/play.svg);
+  background-size: 28px 30px;
+  width: 28px;
+  height: 30px;
+}
+
+.toggle-torque:hover {
+  background-image: url(../img/play_hover.svg);
+}
+
+.toggle-torque.pause {
+  background-image: url(../img/pause.svg);
+}
+
+.toggle-torque.pause:hover {
+  background-image: url(../img/pause_hover.svg);
+}
+
 .map-info {
+  display: flex;
   z-index: 1001;
   position: absolute;
   background: white;
   color: #525868;
   top: 50px;
   left: 50px;
-  padding: 20px 40px;
+  padding: 20px 25px 20px 40px;
   text-transform: uppercase;
   text-align: right;
 }
