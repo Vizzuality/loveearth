@@ -12,6 +12,8 @@ var baseurl = this.baseurl = 'http://{s}.basemaps.cartocdn.com/dark_nolabels/{z}
 var map = this.map = L.map('map', {attributionControl: false, zoomControl: false}).setView(PLACES[0].slice(0,2), PLACES[0][2]);
 var basemap = this.basemap = L.tileLayer(baseurl).addTo(map);
 
+L.control.zoom({position: 'topright'}).addTo(map);
+
 var satelliteUrl = 'https://tiles0.planet.com/v0/mosaics/landsat8_toa_rgb_mosaic/{z}/{x}/{y}.png?api_key=7e2b6bec147f45da89e2d1de6ceee79f';
 var satellite = L.tileLayer(satelliteUrl, {minZoom: 6, maxZoom: 6}).addTo(map);
 satellite.setZIndex(995);
@@ -27,11 +29,6 @@ labels.setZIndex(998);
 var lightLabelsUrl = 'http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png';
 var lightLabels = L.tileLayer(lightLabelsUrl, {minZoom: 6}).addTo(map);
 lightLabels.setZIndex(998);
-
-map.dragging.disable();
-map.touchZoom.disable();
-map.doubleClickZoom.disable();
-map.scrollWheelZoom.disable()
 
 var placeToggle = true, placeIndex = 1;
 var placeNameEl = document.querySelector('#place-name');

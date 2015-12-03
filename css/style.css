@@ -36,8 +36,8 @@ body {
 
 .about-modal h1 {
   color: #5B78C9;
-  font-size: 50px;
-  margin-bottom: 60px;
+  font-size: 60px;
+  margin-bottom: 70px;
   width: 400px;
 }
 
@@ -330,6 +330,47 @@ div.cartodb-tooltip-content {
 .cartodb-logo,
 .leaflet-control-attribution {
   display: none !important;
+}
+
+.leaflet-top .leaflet-control,
+.leaflet-right .leaflet-control {
+  margin-right: 50px;
+  margin-top: 50px;
+}
+
+.leaflet-bar {
+  box-shadow: none;
+}
+
+.leaflet-bar a:first-child {
+  text-indent: -9999px;
+  background-image: url(../img/plus.svg);
+  background-color: white;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom: 1px solid #242426;
+  width: 35px;
+  height: 35px;
+}
+
+.leaflet-bar a:first-child:hover {
+  background-color: #34D3CC;
+  background-image: url(../img/plus-hover.svg);
+}
+
+.leaflet-bar a:last-child:hover {
+  background-image: url(../img/subtract-hover.svg);
+  background-color: #34D3CC;
+}
+
+.leaflet-bar a:last-child {
+  text-indent: -9999px;
+  background-image: url(../img/subtract.svg);
+  background-color: white;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  width: 35px;
+  height: 35px;
 }
 
 @media (max-width: 767px) {
