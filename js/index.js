@@ -155,6 +155,9 @@ cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7efc5190-8ec8-11
       }
 
       var date = moment(change.time);
+
+      $('#torque-time').html(date.format('Do MMM YYYY'));
+
       allInstaImages.forEach(function(insta) {
         var range = moment.range(insta.created_time.clone().subtract(6, 'hours'), insta.created_time.clone().add(6, 'hours'));
         if (date.within(range) && alreadyDone.indexOf(insta) < 0) {
