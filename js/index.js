@@ -9,7 +9,7 @@ var PLACES = [
 
 var baseurl = this.baseurl = 'http://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png';
 
-var map = this.map = L.map('map', {attributionControl: false, zoomControl: false}).setView(PLACES[0].slice(0,2), PLACES[0][2]);
+var map = this.map = L.map('map', {minZoom: 2, attributionControl: false, zoomControl: false}).setView(PLACES[0].slice(0,2), PLACES[0][2]);
 var basemap = this.basemap = L.tileLayer(baseurl).addTo(map);
 
 L.control.zoom({position: 'topright'}).addTo(map);
@@ -34,7 +34,13 @@ var placeToggle = true, placeIndex = 1;
 var placeNameEl = document.querySelector('#place-name');
 placeNameEl.innerHTML = PLACES[0][3];
 var placeTimeout;
+var autoZooming = false;
 var move = function() {
+  map.once('zoomend', function() {
+    autoZooming = false;
+  });
+
+  autoZooming = true;
   var currentIndex = placeIndex % (PLACES.length);
   map.setView(PLACES[currentIndex].slice(0,2), PLACES[currentIndex][2], {duration: 3});
   placeTimeout = setTimeout(move, PLACES[currentIndex][4]);
@@ -74,7 +80,7 @@ $('#toggle-torque').on('click', function() {
   showImages = !showImages;
 });
 
-var pauseAnimation = function() {
+var pauseAnimation = function(event) {
   $('#toggle-torque').removeClass('pause');
   torqueLayer.pause();
 
@@ -88,8 +94,10 @@ var pauseAnimation = function() {
 };
 
 map.on('dragend', pauseAnimation);
-map.on('zoomend', function() {
-  setTimeout(pauseAnimation, 500);
+map.on('zoomend', function(event) {
+  if (autoZooming === false) {
+    setTimeout(pauseAnimation, 500);
+  }
 });
 
 function createCookie(name, value) {
