@@ -46,13 +46,10 @@ var move = function() {
 }
 placeTimeout = setTimeout(move, PLACES[0][4]);
 
-var toggleMovement = function() {
+var stopMovement = function() {
   if (placeTimeout !== undefined) {
     clearTimeout(placeTimeout);
     placeTimeout = undefined;
-  } else {
-    var currentIndex = placeIndex % (PLACES.length);
-    placeTimeout = setTimeout(move, PLACES[currentIndex][4]);
   }
 };
 
@@ -72,7 +69,7 @@ var torqueLayer;
 $('#toggle-torque').on('click', function() {
   $(this).toggleClass('pause');
   torqueLayer.toggle();
-  toggleMovement();
+  stopMovement();
   showImages = !showImages;
 });
 
