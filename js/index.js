@@ -156,7 +156,9 @@ cartodb.createLayer(map, "http://aarondb.cartodb.com/api/v2/viz/7efc5190-8ec8-11
 
       var date = moment(change.time);
 
-      $('#torque-time').html(date.format('Do MMM YYYY'));
+      if (change.time.toString() !== 'Invalid Date') {
+        $('#torque-time').html(date.format('Do MMM YYYY'));
+      }
 
       allInstaImages.forEach(function(insta) {
         var range = moment.range(insta.created_time.clone().subtract(6, 'hours'), insta.created_time.clone().add(6, 'hours'));
@@ -192,7 +194,7 @@ var easeInOutCirc = function(currentIteration, startValue, changeInValue, totalI
 
 var bounceDuration = 0.25, fps = 60;
 var iterations = bounceDuration * fps;
-var startSize = 0, endSize = 50;
+var startSize = 0, endSize = 100;
 var changePerItration = (endSize - startSize) / iterations;
 var changeInValue = (endSize - startSize);
 var currentIteration = 0;
