@@ -74,6 +74,24 @@ $('#toggle-torque').on('click', function() {
   showImages = !showImages;
 });
 
+var pauseAnimation = function() {
+  $('#toggle-torque').removeClass('pause');
+  torqueLayer.pause();
+
+  if (placeTimeout !== undefined) {
+    clearTimeout(placeTimeout);
+    placeTimeout = undefined;
+  }
+
+  availableImages = [];
+  showImages = !showImages;
+};
+
+map.on('dragend', pauseAnimation);
+map.on('zoomend', function() {
+  setTimeout(pauseAnimation, 500);
+});
+
 function createCookie(name, value) {
   document.cookie = name+"="+value+"; path=/";
 }
