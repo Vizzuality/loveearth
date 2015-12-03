@@ -23,12 +23,8 @@ var deepSatellite = L.tileLayer(deepSatelliteUrl, {minZoom: 6}).addTo(map);
 deepSatellite.setZIndex(996);
 
 var labelsUrl = 'http://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png';
-var labels = L.tileLayer(labelsUrl, {maxZoom: 5}).addTo(map);
+var labels = L.tileLayer(labelsUrl).addTo(map);
 labels.setZIndex(998);
-
-var lightLabelsUrl = 'http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png';
-var lightLabels = L.tileLayer(lightLabelsUrl, {minZoom: 6}).addTo(map);
-lightLabels.setZIndex(998);
 
 var placeToggle = true, placeIndex = 1;
 var placeNameEl = document.querySelector('#place-name');
