@@ -14,11 +14,11 @@ var basemap = this.basemap = L.tileLayer(baseurl).addTo(map);
 
 L.control.zoom({position: 'topright'}).addTo(map);
 
-var satelliteUrl = 'https://tiles0.planet.com/v0/mosaics/landsat8_toa_rgb_mosaic/{z}/{x}/{y}.png?api_key=7e2b6bec147f45da89e2d1de6ceee79f';
+var satelliteUrl = 'https://tiles0.planet.com/v0/mosaics/landsat8_toa_rgb_mosaic/{z}/{x}/{y}.png?api_key=b3ba623f973449a393bb6b1839a9143c';
 var satellite = L.tileLayer(satelliteUrl, {minZoom: 6, maxZoom: 6}).addTo(map);
 satellite.setZIndex(995);
 
-var deepSatelliteUrl = 'https://tiles0.planet.com/v0/mosaics/open_california_hybrid_mosaic/{z}/{x}/{y}.png?api_key=7e2b6bec147f45da89e2d1de6ceee79f';
+var deepSatelliteUrl = 'https://tiles0.planet.com/v0/mosaics/open_california_hybrid_mosaic/{z}/{x}/{y}.png?api_key=b3ba623f973449a393bb6b1839a9143c';
 var deepSatellite = L.tileLayer(deepSatelliteUrl, {minZoom: 6}).addTo(map);
 deepSatellite.setZIndex(996);
 
