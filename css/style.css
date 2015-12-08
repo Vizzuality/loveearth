@@ -378,10 +378,20 @@ div.cartodb-tooltip-content {
     left: 20px;
     top: 20px;
     right: 20px;
+    padding: 15px;
+  }
+
+  .map-info {
+    font-size: 10px;
+  }
+
+  .toggle-torque-container {
+    margin-left: 15px;
+    padding-left: 15px;
   }
 
   .map-info-hashtag {
-    font-size: 25px;
+    font-size: 20px;
   }
 
   .cartodb-icon {
@@ -390,7 +400,6 @@ div.cartodb-tooltip-content {
 
   .vizzuality-icon {
     width: 75px;
-    margin-top: -2px;
   }
 
   .pl-icon,
@@ -416,15 +425,31 @@ div.cartodb-tooltip-content {
   .icon-container h3 {
     display: none;
   }
+
+  .leaflet-right .leaflet-control {
+    margin-right: 20px;
+  }
+
+  .leaflet-top {
+    bottom: 20px;
+    top: auto;
+  }
 }
 
 @media (max-width: 320px) {
   .map-info {
     padding: 20px 25px;
+    justify-content: space-between;
   }
 
   .map-info h2 {
     font-size: 10px;
+    order: 2;
+  }
+
+  .map-info > div:first-of-type {
+    flex-direction: column;
+    text-align: left;
   }
 
   .map-info-hashtag {
