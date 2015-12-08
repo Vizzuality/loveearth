@@ -1,10 +1,7 @@
 $(document).ready(function() {
 
 var PLACES = [
-  [42.553080, -0.878906, 2, "World", 10000],
-  [35.44277092585766, -120.22338867187499, 6, "California", 15000],
-  [34.061761, -118.247223, 11, "Los Angeles", 20000],
-  [34.193630, -118.672943, 12, "Los Angeles", 20000],
+  [42.553080, -0.878906, 2, "World", 10000]
 ];
 
 var baseurl = this.baseurl = 'http://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png';
@@ -14,44 +11,9 @@ var basemap = this.basemap = L.tileLayer(baseurl).addTo(map);
 
 L.control.zoom({position: 'topright'}).addTo(map);
 
-var satelliteUrl = 'https://tiles0.planet.com/v0/mosaics/landsat8_toa_rgb_mosaic/{z}/{x}/{y}.png?api_key=b3ba623f973449a393bb6b1839a9143c';
-var satellite = L.tileLayer(satelliteUrl, {minZoom: 6, maxZoom: 6}).addTo(map);
-satellite.setZIndex(995);
-
-var deepSatelliteUrl = 'https://tiles0.planet.com/v0/mosaics/open_california_hybrid_mosaic/{z}/{x}/{y}.png?api_key=b3ba623f973449a393bb6b1839a9143c';
-var deepSatellite = L.tileLayer(deepSatelliteUrl, {minZoom: 6}).addTo(map);
-deepSatellite.setZIndex(996);
-
 var labelsUrl = 'http://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png';
 var labels = L.tileLayer(labelsUrl).addTo(map);
 labels.setZIndex(998);
-
-var placeToggle = true, placeIndex = 1;
-var placeNameEl = document.querySelector('#place-name');
-placeNameEl.innerHTML = PLACES[0][3];
-var placeTimeout;
-var autoZooming = false;
-var move = function() {
-  map.once('zoomend', function() {
-    autoZooming = false;
-  });
-
-  autoZooming = true;
-  var currentIndex = placeIndex % (PLACES.length);
-  map.setView(PLACES[currentIndex].slice(0,2), PLACES[currentIndex][2], {duration: 3});
-  placeTimeout = setTimeout(move, PLACES[currentIndex][4]);
-  placeNameEl.innerHTML = PLACES[currentIndex][3];
-
-  placeIndex += 1;
-}
-placeTimeout = setTimeout(move, PLACES[0][4]);
-
-var stopMovement = function() {
-  if (placeTimeout !== undefined) {
-    clearTimeout(placeTimeout);
-    placeTimeout = undefined;
-  }
-};
 
 var availableImages = [];
 var allInstaImages = [];
@@ -66,31 +28,24 @@ $.get(baseQueryURL+query).done(function(results) {
 
 var showImages = true;
 var torqueLayer;
-$('#toggle-torque').on('click', function() {
-  $(this).toggleClass('pause');
+
+var pauseTorque = function() {
+  $('#toggle-torque').toggleClass('pause');
   torqueLayer.toggle();
-  stopMovement();
-  showImages = !showImages;
-});
-
-var pauseAnimation = function(event) {
-  $('#toggle-torque').removeClass('pause');
-  torqueLayer.pause();
-
-  if (placeTimeout !== undefined) {
-    clearTimeout(placeTimeout);
-    placeTimeout = undefined;
-  }
-
-  availableImages = [];
   showImages = !showImages;
 };
 
+var pauseAnimation = function() {
+  $('#toggle-torque').removeClass('pause');
+  torqueLayer.pause();
+  showImages = !showImages;
+  availableImages = [];
+};
+
+$('#toggle-torque').on('click', pauseTorque);
 map.on('dragend', pauseAnimation);
 map.on('zoomend', function(event) {
-  if (autoZooming === false) {
-    setTimeout(pauseAnimation, 500);
-  }
+  setTimeout(pauseAnimation, 500);
 });
 
 function createCookie(name, value) {
