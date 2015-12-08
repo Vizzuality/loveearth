@@ -394,6 +394,11 @@ div.cartodb-tooltip-content {
     font-size: 20px;
   }
 
+  .btn {
+    padding: 5px 10px;
+    text-align: center;
+  }
+
   .cartodb-icon {
     width: 65px;
   }
@@ -411,6 +416,10 @@ div.cartodb-tooltip-content {
   .twitter-icon {
     width: auto;
     height: auto;
+  }
+
+  .icon-container {
+    padding-right: 20px;
   }
 
   .icon-container li,
@@ -436,7 +445,7 @@ div.cartodb-tooltip-content {
   }
 }
 
-@media (max-width: 320px) {
+@media (max-width: 375px) {
   .map-info {
     padding: 20px 25px;
     justify-content: space-between;
