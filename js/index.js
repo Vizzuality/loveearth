@@ -71,6 +71,17 @@ if (readCookie('seenmodal') != 'yes') {
   $('.overlay').css('display', 'flex');
 };
 
+if (readCookie('seendescription') != 'yes') {
+  $('#description').css('display', 'block');
+  $('#map').addClass('description-open');
+};
+
+$('#close-description').on('click', function() {
+  $('#description').fadeOut();
+  $('#map').removeClass('description-open');
+  createCookie('seendescription', 'yes');
+});
+
 $('#close-modal, .overlay').on('click', function() {
   $('.overlay').fadeOut();
 
@@ -79,10 +90,6 @@ $('#close-modal, .overlay').on('click', function() {
   }
 
   createCookie('seenmodal', 'yes');
-});
-
-$('#open-modal').on('click', function() {
-  $('.overlay').css('display', 'flex');
 });
 
 var alreadyDone = [];
