@@ -380,7 +380,6 @@ div.cartodb-tooltip-content {
   top: 0;
   left: 0;
   right: 0;
-  display: none;
 }
 
 .description-content {
@@ -490,6 +489,10 @@ div.cartodb-tooltip-content {
     bottom: 20px;
     top: auto;
   }
+
+  .description-content {
+    padding: 10px;
+  }
 }
 
 @media (max-width: 375px) {
@@ -531,5 +534,10 @@ div.cartodb-tooltip-content {
   .instagram-icon {
     width: 16px;
     margin-top: -3px;
+  }
+
+  .description-content {
+    padding: 10px;
+    font-size: 13px;
   }
 }
